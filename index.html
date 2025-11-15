@@ -4,180 +4,98 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>FINAL BOSS — Ransomware Simulation (Visual Only)</title>
+<title>OMEGA PROTOCOL — Ransomware Simulation (LEVEL 7)</title>
 <style>
-:root{--red:#ff0033;--warn:#ffb74d;--bg:#000;--accent:#00ff88}
-*{box-sizing:border-box}
-html,body{height:100%;margin:0;background:#000;color:var(--accent);font-family: "Lucida Console", Monaco, monospace;overflow:hidden}
-#matrix{position:fixed;inset:0;z-index:1;opacity:0.25;pointer-events:none}
-#glitch{position:fixed;inset:0;background:url('https://i.ibb.co/6gBPM7w/glitch.gif') center/cover;opacity:0;z-index:5;pointer-events:none}
-#flash{position:fixed;inset:0;background:var(--red);opacity:0;z-index:8;pointer-events:none}
-#stage{position:relative;z-index:10;display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;gap:12px;padding:20px;text-align:center}
-#title{font-size:clamp(20px,6vw,64px);text-shadow:0 0 30px rgba(255,0,0,0.6);color:var(--red)}
-#subtitle{font-size:16px;opacity:0.9}
-#timer{font-size:56px;color:var(--warn);text-shadow:0 0 20px rgba(255,180,77,0.6)}
-#files{width:90%;max-width:1000px;height:34vh;background:linear-gradient(0deg, rgba(0,0,0,0.5), rgba(6,6,6,0.6));border-radius:8px;padding:12px;overflow:auto;border:1px solid rgba(255,255,255,0.03);color:#d0ffd9;text-align:left}
-.file{display:flex;justify-content:space-between;padding:6px 8px;border-bottom:1px dashed rgba(255,255,255,0.03);align-items:center}
-.file .name{font-size:15px}
-.file .status{font-size:13px;color:#ffa8a8}
-.controls{display:flex;gap:10px;align-items:center}
-.btn{padding:10px 14px;border-radius:8px;border:none;cursor:pointer}
-.btn-danger{background:var(--red);color:#fff}
-.btn-ghost{background:#111;border:1px solid rgba(255,255,255,0.04);color:#fff}
-#ransomModal{position:fixed;right:6%;top:8%;width:380px;background:#0a0a0a;border:3px solid var(--red);padding:14px;z-index:10002;display:none;box-shadow:0 0 40px rgba(255,0,0,0.25)}
-#overlay{position:fixed;inset:0;background:rgba(0,0,0,0.98);z-index:10001;display:none;align-items:center;justify-content:center;flex-direction:column}
-#scare{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:#000;z-index:10003}
-#scare img{max-width:96%;max-height:96%;transform:scale(1.05)}
-#stop{position:fixed;left:18px;bottom:18px;padding:12px 16px;background:#0c8;border:none;border-radius:8px;color:#002;z-index:10004;cursor:pointer}
-.hint{position:fixed;bottom:18px;right:18px;background:#111;border:2px solid rgba(255,255,255,0.06);padding:8px 10px;border-radius:6px;color:#eee;z-index:10004}
-.terminal{position:fixed;left:6%;bottom:6%;width:420px;height:220px;background:#020202;border:2px solid #003300;color:#0f0;padding:12px;font-size:13px;overflow:auto;box-shadow:0 0 30px #00ff55;z-index:10002}
-.fake-progress{height:12px;background:#222;border-radius:6px;overflow:hidden;margin-top:8px}
-.fake-progress > i{display:block;height:100%;width:0%;background:linear-gradient(90deg,#ff6b6b,#ffb86b);transition:width 0.5s}
+:root{--r:#ff0033;--y:#ffd36b;--g:#00ff99;--a:#00eaff;--bg:#000}
+*{margin:0;padding:0;box-sizing:border-box;font-family:"Lucida Console",monospace}
+html,body{height:100%;background:#000;color:#0f0;overflow:hidden}
+#noise{position:fixed;inset:0;background:url('https://i.ibb.co/Fm1P1qX/noise.gif') center/cover;opacity:0.12;z-index:9990;pointer-events:none}
+#scan{position:fixed;left:0;top:0;width:100%;height:3px;background:#0f0;filter:blur(2px);opacity:0;z-index:9992}
+#warning{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;flex-direction:column;z-index:10;color:#f00;text-shadow:0 0 20px #f00;opacity:0;transition:0.3s}
+#core{position:relative;z-index:5;top:10%;width:100%;text-align:center;color:#aef}
+#core h1{font-size:clamp(28px,6vw,80px);text-shadow:0 0 25px #00eaff}
+#core p{font-size:14px;margin-top:6px;color:#8cf}
+#clock{font-size:60px;margin-top:18px;color:var(--y);text-shadow:0 0 22px var(--y)}
+#files{width:92%;height:35vh;margin:20px auto;background:rgba(0,0,0,0.5);border:1px solid #033;padding:10px;border-radius:8px;overflow:auto;color:#cff}
+.file{display:flex;justify-content:space-between;padding:6px 8px;border-bottom:1px solid #033}
+.controls{margin-top:14px;display:flex;gap:10px;justify-content:center}
+.btn{padding:10px 14px;border-radius:8px;border:none;cursor:pointer;color:#fff}
+.btn-danger{background:var(--r)}
+.btn-ghost{background:#111;border:1px solid #333}
+#modal{position:fixed;top:10%;right:4%;width:380px;background:#050505;border:3px solid var(--r);z-index:20000;padding:16px;display:none}
+#overlay{position:fixed;inset:0;background:rgba(0,0,0,0.97);z-index:15000;display:none;align-items:center;justify-content:center;color:#f00;text-shadow:0 0 20px #f00}
+#scare{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:#000;z-index:30000}
+#scare img{max-width:98%;max-height:98%}
+#stop{position:fixed;bottom:16px;left:16px;padding:10px 14px;background:#0c8;color:#000;border-radius:8px;cursor:pointer;z-index:50000}
+.hint{position:fixed;bottom:20px;right:20px;background:#111;color:#fff;border:1px solid #333;padding:8px 10px;border-radius:6px;z-index:50000}
 </style>
 </head>
 <body>
-<canvas id="matrix"></canvas>
-<div id="glitch"></div>
-<div id="flash"></div>
-<div id="stage" tabindex="0">
-  <div id="title">!!! FINAL BOSS — SYSTEM LOCKED !!!</div>
-  <div id="subtitle">Semua partisi terenkripsi. Kunci pemulihan diperlukan.</div>
-  <div id="timer">10:00</div>
-  <div id="files" aria-hidden="true"></div>
+<div id="noise"></div>
+<div id="scan"></div>
+<div id="warning"><h1>SYSTEM BREACH — OMEGA PROTOCOL</h1><p>FINAL ENCRYPTION STAGE</p></div><div id="core">
+  <h1>OMEGA PROTOCOL INITIATED</h1>
+  <p>Seluruh sektor terkunci — fase Omega aktif.</p>
+  <div id="clock">05:00</div>
+  <div id="files"></div>
   <div class="controls">
-    <button class="btn btn-danger" id="btnPay">INSTRUKSI PEMBAYARAN</button>
-    <button class="btn btn-ghost" id="btnAttempt">COBA DECRYPT</button>
-    <div class="badge" style="color:#0f0">Sim: FINAL-BOSS</div>
+    <button class="btn btn-danger" id="payBtn">INSTRUKSI PEMBAYARAN</button>
+    <button class="btn btn-ghost" id="decBtn">COBA DECRYPT</button>
   </div>
-</div><div id="ransomModal">
-  <h3 style="color:var(--red);margin:0 0 8px 0">INSTRUKSI PEMBAYARAN</h3>
-  <p style="font-size:13px;color:#fff;opacity:0.95;margin:0 0 8px 0">Pembayaran via WhatsApp Admin (visual only). Hubungi admin untuk instruksi.</p>
-  <div style="display:flex;gap:8px;align-items:center">
-    <input id="waNumber" value="+6281574684348" readonly style="flex:1;padding:8px;background:#111;border:1px solid rgba(255,255,255,0.04);color:#fff;border-radius:6px" />
-    <button id="waOpen" class="btn btn-ghost">Hubungi</button>
-  </div>
-  <div style="margin-top:10px">Unggah bukti (simulasi):</div>
-  <input type="file" id="fakeUpload" style="width:100%;margin-top:8px;background:#000;color:#0f0" />
-  <button id="fakeSubmit" class="btn btn-danger" style="width:100%;margin-top:10px">Kirim Bukti (Simulasi)</button>
-  <div class="fake-progress" aria-hidden="true"><i id="prog"></i></div>
-</div><div id="overlay"><h1 style="color:var(--red);font-size:40px;margin:0">ACCESS DENIED</h1><p style="color:#fff;opacity:0.9;margin-top:12px">Sistem rusak. Menunggu instruksi.</p></div>
-<div id="scare"><img src="https://i.ibb.co/3s5rD7p/screamer.png" alt="scare"/></div>
-<div class="terminal" id="terminal">&gt; ready</div>
-<button id="stop">PRANK STOP</button>
-<div class="hint">Tap layar untuk MEMULAI (required)</div><!-- Audio layers --><audio id="amb" loop preload="auto"><source src="https://cdn.pixabay.com/audio/2022/03/15/audio_ef7b8e135b.mp3" type="audio/mp3"></audio> <audio id="alarm" preload="auto"><source src="https://assets.mixkit.co/sfx/preview/mixkit-bell-alert-610.mp3" type="audio/mp3"></audio> <audio id="scream" preload="auto"><source src="https://files.catbox.moe/2lfk6k.mp3" type="audio/mp3"></audio>
+</div><div id="modal">
+  <h3 style="color:var(--r);margin:0 0 10px 0">BAYAR VIA WHATSAPP</h3>
+  <p style="color:#eee;font-size:13px;margin-bottom:8px">Hubungi admin untuk instruksi lanjutan.</p>
+  <input value="+6281574684348" id="waNum" readonly style="width:100%;padding:8px;background:#111;color:#fff;border:1px solid #333;margin-bottom:8px" />
+  <button id="openWa" class="btn btn-ghost" style="width:100%">Hubungi</button>
+</div><div id="overlay"><h1>ACCESS FINAL-LOCKED</h1></div>
+<div id="scare"><img src="https://i.ibb.co/3s5rD7p/screamer.png" /></div>
+<button id="stop">STOP</button>
+<div class="hint">Tap layar untuk MEMULAI</div><audio id="amb" loop preload="auto"><source src="https://cdn.pixabay.com/audio/2022/03/15/audio_ef7b8e135b.mp3"></audio> <audio id="alert" preload="auto"><source src="https://assets.mixkit.co/sfx/preview/mixkit-bell-alert-610.mp3"></audio> <audio id="sc" preload="auto"><source src="https://files.catbox.moe/2lfk6k.mp3"></source></audio>
 
 <script>
-/* FINAL BOSS — harmless visual simulation
-   - 10 menit countdown (600s)
-   - WhatsApp button (opens wa.me link)
-   - fake decrypt progress
-   - auto-vibrate and jumpscare near end
-   - STOP button resets everything
-*/
+const filesBox=document.getElementById('files');
+const clock=document.getElementById('clock');
+const modal=document.getElementById('modal');
+const overlay=document.getElementById('overlay');
+const scare=document.getElementById('scare');
+const hint=document.querySelector('.hint');
+const scan=document.getElementById('scan');
+const warning=document.getElementById('warning');
+const amb=document.getElementById('amb');
+const alertS=document.getElementById('alert');
+const sc=document.getElementById('sc');
+let started=false;
+let time=300;
+let countI,scanI;
 
-const START_SEC = 600; // 10 minutes
-let timeLeft = START_SEC;
-const timerEl = document.getElementById('timer');
-const filesEl = document.getElementById('files');
-const terminal = document.getElementById('terminal');
-const ransomModal = document.getElementById('ransomModal');
-const waOpen = document.getElementById('waOpen');
-const waNumber = document.getElementById('waNumber');
-const fakeSubmit = document.getElementById('fakeSubmit');
-const prog = document.getElementById('prog');
-const amb = document.getElementById('amb');
-const alarm = document.getElementById('alarm');
-const scream = document.getElementById('scream');
-const flash = document.getElementById('flash');
-const glitch = document.getElementById('glitch');
-const scare = document.getElementById('scare');
-const stopBtn = document.getElementById('stop');
-const hint = document.querySelector('.hint');
-const matrix = document.getElementById('matrix');
+const fake=["root/system32.dll","data/private.bin","wallet/seed.dat","photos/family_2024.jpg","notes/passwords.txt","archive/backup.zip","config/system.lock","media/video.mp4","documents/ID.pdf"];
+function render(){filesBox.innerHTML=''; fake.forEach(f=>{filesBox.innerHTML+=`<div class="file"><span>${f}</span><span style="color:#f88">LOCKED</span></div>`});}
+render();
 
-let countdownI, popupI, flashI, matrixI, termI, progI;
-let started = false;
+function format(s){const m=String(Math.floor(s/60)).padStart(2,'0');const x=String(s%60).padStart(2,'0');return `${m}:${x}`;}
 
-/* fake file list */
-const FAKE_FILES = [
-  'Photos/IMG_2025_vacation.jpg','Docs/Invoice_2025.pdf','Work/presentation_final.pptx','Wallets/backup_wallet.dat',
-  'Notes/passwords.txt','Videos/family.mp4','Projects/secret.ai','Design/logo_source.psd','Backup/system.img','Archives/important.zip'
-];
-function renderFiles(){
-  filesEl.innerHTML = '';
-  FAKE_FILES.forEach((f,i)=>{
-    const el = document.createElement('div'); el.className='file';
-    const n = document.createElement('div'); n.className='name'; n.textContent = f;
-    const s = document.createElement('div'); s.className='status'; s.textContent = 'OK';
-    el.appendChild(n); el.appendChild(s); filesEl.appendChild(el);
-  });
-}
-renderFiles();
-
-/* matrix canvas */
-function fit(){ matrix.width = innerWidth; matrix.height = innerHeight; }
-fit(); window.addEventListener('resize', fit);
-const ctx = matrix.getContext('2d');
-const cols = Math.floor(window.innerWidth/10);
-let drops = Array(cols).fill(1);
-function drawMatrix(){ ctx.fillStyle='rgba(0,0,0,0.08)'; ctx.fillRect(0,0,matrix.width,matrix.height); ctx.fillStyle='#00ff88'; ctx.font='14px monospace'; for(let i=0;i<drops.length;i++){ const ch = Math.random()>0.5?'1':'0'; ctx.fillText(ch,i*10,drops[i]*14); if(drops[i]*14 > matrix.height && Math.random()>0.975) drops[i]=0; drops[i]++; } }
-
-/* terminal simulator */
-const TERMINAL_LINES = ['root@system:~# exploit_kernel --init','root@system:~# mount -o remount,rw /','root@system:~# encrypt --target /home/user --alg AES-4096','root@system:~# wipe_shadow_copies','root@system:~# send_status --backchannel ok'];
-let tIdx=0;
-function startTerminal(){ termI = setInterval(()=>{ if(tIdx < TERMINAL_LINES.length){ terminal.textContent += '
-'+TERMINAL_LINES[tIdx]; terminal.scrollTop = terminal.scrollHeight; tIdx++; } else clearInterval(termI); },900); }
-
-/* speech */
-function speak(txt,rate=0.95,pitch=0.7){ if(!('speechSynthesis' in window)) return; const u=new SpeechSynthesisUtterance(txt); u.rate=rate; u.pitch=pitch; try{ speechSynthesis.speak(u);}catch(e){} }
-
-/* effects */
-function doFlash(){ flash.style.opacity = Math.random()*0.9; setTimeout(()=> flash.style.opacity=0,120); }
-function glitchPulse(){ glitch.style.opacity = 0.9; setTimeout(()=> glitch.style.opacity = Math.random()*0.12, 400); }
-function spawnPopup(){ const p=document.createElement('div'); p.className='pop'; p.textContent='⚠ CRITICAL WRITE ERROR'; p.style.position='fixed'; p.style.top=(10+Math.random()*70)+'%'; p.style.left=(10+Math.random()*70)+'%'; p.style.padding='8px 12px'; p.style.background='#111'; p.style.border='2px solid var(--red)'; p.style.color='#ffdddd'; p.style.zIndex=10005; document.body.appendChild(p); setTimeout(()=>p.remove(),2500+Math.random()*2000); }
-function vibrateNow(pat=[300,200,300]){ if(navigator.vibrate) navigator.vibrate(pat); }
-function triggerJumpscare(){ try{ scream.currentTime=0; scream.play().catch(()=>{});}catch(e){}; scare.style.display='flex'; setTimeout(()=> scare.style.display='none',1600); }
-
-/* progress bar simulation */
-function startFakeProgress(){ let w=0; prog.style.width='0%'; progI = setInterval(()=>{ w += Math.random()*12 + 6; if(w>=100){ w=100; clearInterval(progI); prog.style.width='100%'; } else prog.style.width = w+'%'; }, 700); }
-
-/* core sequence */
-function startAll(){ if(started) return; started=true; hint.remove(); // try fullscreen
- try{ document.documentElement.requestFullscreen().catch(()=>{}); }catch(e){}
- // start ambience
- amb.volume = 0.45; amb.play().catch(()=>{});
- // matrix + terminal
- matrixI = setInterval(drawMatrix,40); startTerminal();
- // spawn effects
- popupI = setInterval(spawnPopup,700); flashI = setInterval(()=>{ doFlash(); glitchPulse(); alarm.play().catch(()=>{}); vibrateNow([200,100,200]); },520);
- // countdown
- timerEl.textContent = formatTime(timeLeft);
- countdownI = setInterval(()=>{ timeLeft--; timerEl.textContent = formatTime(timeLeft);
- // mark files encrypted over time
- if(timeLeft % 20 === 0){ const idx = Math.floor(Math.random()*FAKE_FILES.length); const el = filesEl.children[idx]; if(el) el.querySelector('.status').textContent = 'ENCRYPTED'; }
- // TTS cues
- if(timeLeft === 480) speak('Peringatan. Akses tidak sah terdeteksi.');
- if(timeLeft === 300) speak('Sedang mengenkripsi partisi pengguna.');
- if(timeLeft === 60) speak('Satu menit tersisa.');
- if(timeLeft === 10){ vibrateNow([400,200,400]); doFlash(); triggerJumpscare(); speak('Kegagalan kritis.',1.05,0.6); }
- if(timeLeft <= 0){ clearInterval(countdownI); endSequence(); }
- },1000);
+function start(){if(started)return;started=true;hint.remove();amb.volume=.5;amb.play().catch(()=>{});
+scanI=setInterval(()=>{scan.style.opacity=1;scan.style.top=Math.random()*100+'%';setTimeout(()=>scan.style.opacity=0,200);},300);
+warning.style.opacity=1;
+setTimeout(()=>warning.style.opacity=0,2000);
+countI=setInterval(()=>{
+ time--; clock.textContent=format(time);
+ if(time%25===0)alertS.play().catch(()=>{});
+ if(time===30){vib([400,150,400]); flash(); jumpscare();}
+ if(time<=0){clearInterval(countI);final();}
+},1000);
 }
 
-function endSequence(){ clearInterval(popupI); clearInterval(flashI); clearInterval(matrixI); ransomModal.style.display='block'; overlay.style.display='flex'; speak('Enkripsi selesai. Menunggu instruksi pembayaran.'); vibrateNow([600,200,600,200,600]); }
+function vib(p){if(navigator.vibrate)navigator.vibrate(p);}
+function flash(){document.body.style.background='#300';setTimeout(()=>document.body.style.background='#000',150);}
+function jumpscare(){sc.currentTime=0;sc.play().catch(()=>{});scare.style.display='flex';setTimeout(()=>scare.style.display='none',1500);}
 
-function stopAll(){ try{ speechSynthesis.cancel(); }catch(e){} clearInterval(countdownI); clearInterval(popupI); clearInterval(flashI); clearInterval(matrixI); clearInterval(termI); amb.pause(); alarm.pause(); scream.pause(); overlay.style.display='none'; ransomModal.style.display='none'; flash.style.opacity=0; glitch.style.opacity=0; scare.style.display='none'; document.querySelectorAll('.pop').forEach(n=>n.remove()); stopBtn.remove(); const m=document.createElement('div'); m.className='pop'; m.style.position='fixed'; m.style.top='50%'; m.style.left='50%'; m.style.transform='translate(-50%,-50%)'; m.style.background='#023'; m.style.border='2px solid #0f0'; m.style.color='#0f0'; m.style.padding='12px 16px'; m.textContent='PRANK STOPPED — INI HANYA SIMULASI.'; document.body.appendChild(m); setTimeout(()=>m.remove(),6000); if(navigator.vibrate) navigator.vibrate(0); }
+function final(){overlay.style.display='flex';vib([600,200,600]);alertS.play();}
 
-function formatTime(s){ const m=Math.floor(s/60).toString().padStart(2,'0'); const sec=(s%60).toString().padStart(2,'0'); return `${m}:${sec}`; }
-
-/* UI hooks */
-document.body.addEventListener('click', function init(){ document.body.removeEventListener('click', init); startAll(); }, {once:true});
-stopBtn.addEventListener('click', stopAll);
-btnPay.addEventListener('click', ()=>{ ransomModal.style.display='block'; speak('Jendela instruksi dibuka'); });
-btnAttempt.addEventListener('click', ()=>{ speak('Mencoba dekripsi...'); doFlash(); spawnPopup(); setTimeout(()=>alert('DEKRIPSI GAGAL. KUNCI TIDAK DITEMUKAN.'),900); });
-waOpen.addEventListener('click', ()=>{ const num = waNumber.value.replace(/[^0-9+]/g,''); const link = `https://wa.me/${num.replace(/^\+/, '')}`; window.open(link,'_blank'); });
-fakeSubmit.addEventListener('click', ()=>{ startFakeProgress(); speak('Bukti terkirim. Menunggu verifikasi.'); setTimeout(()=>{ alert('Simulasi: bukti terkirim. Admin akan memverifikasi.'); },2000); });
-
-console.log('FINAL BOSS simulation loaded — harmless visual only.');
+document.body.addEventListener('click',()=>start(),{once:true});
+document.getElementById('stop').onclick=()=>location.reload();
+document.getElementById('payBtn').onclick=()=>modal.style.display='block';
+document.getElementById('decBtn').onclick=()=>alert('DEKRIPSI GAGAL — KUNCI TIDAK VALID');
+document.getElementById('openWa').onclick=()=>window.open('https://wa.me/6281574684348','_blank');
 </script></body>
 </html>
