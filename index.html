@@ -3,410 +3,252 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>OMEGA PROTOCOL — LEVEL 7 (NERAKA MODE)</title>
+<title>BLACKOUT PROTOCOL — LEVEL 8 (SIMULASI)</title>
+<meta name="referrer" content="no-referrer">
 <style>
-:root{--r:#ff0033;--y:#ffd36b;--g:#00ff99;--a:#00eaff;--bg:#000}
-*{margin:0;padding:0;box-sizing:border-box;font-family:"Lucida Console",monospace}
-html,body{height:100%;background:#000;color:#0f0;overflow:hidden}
-#noise{position:fixed;inset:0;background:url('https://i.ibb.co/Fm1P1qX/noise.gif') center/cover;opacity:0.12;z-index:9990;pointer-events:none}
-#scan{position:fixed;left:0;top:0;width:100%;height:3px;background:#0f0;filter:blur(2px);opacity:0;z-index:9992}
-#warning{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;flex-direction:column;z-index:10;color:#f00;text-shadow:0 0 20px #f00;opacity:0;transition:0.3s}
-#core{position:relative;z-index:5;top:6%;width:100%;text-align:center;color:#aef}
-#core h1{font-size:clamp(28px,6vw,80px);text-shadow:0 0 25px #00eaff}
-#core p{font-size:14px;margin-top:6px;color:#8cf}
-#clock{font-size:60px;margin-top:12px;color:var(--y);text-shadow:0 0 22px var(--y)}
-#files{width:92%;height:30vh;margin:18px auto;background:linear-gradient(0deg, rgba(0,0,0,0.45), rgba(2,2,2,0.6));border:1px solid #033;padding:8px;border-radius:8px;overflow:auto;color:#cff}
-.file{display:flex;justify-content:space-between;padding:6px 8px;border-bottom:1px solid rgba(3,50,51,0.2)}
-.controls{margin-top:8px;display:flex;gap:10px;justify-content:center}
-.btn{padding:8px 12px;border-radius:8px;border:none;cursor:pointer;color:#fff;font-size:14px}
-.btn-danger{background:var(--r)}
-.btn-ghost{background:#111;border:1px solid #333}
-#modal{position:fixed;top:10%;right:4%;width:360px;background:#050505;border:3px solid var(--r);z-index:20000;padding:12px;display:none}
-#overlay{position:fixed;inset:0;background:rgba(0,0,0,0.98);z-index:15000;display:none;align-items:center;justify-content:center;color:#f00;text-shadow:0 0 20px #f00;flex-direction:column;padding:20px}
-#overlay h1{font-size:36px;margin-bottom:8px}
-#scare{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:#000;z-index:30000}
-#scare img{max-width:98%;max-height:98%}
-.hint{position:fixed;bottom:20px;right:20px;background:#111;color:#fff;border:1px solid #333;padding:8px 10px;border-radius:6px;z-index:50000}
-#startOverlay{position:fixed;inset:0;background:rgba(0,0,0,0.88);z-index:60000;display:flex;align-items:center;justify-content:center;flex-direction:column;color:#fff}
-#startOverlay button{padding:18px 36px;font-size:22px;border-radius:12px;border:none;background:#ff0033;color:#fff;cursor:pointer;box-shadow:0 0 30px #ff0033}
-#ghostMsg{position:fixed;left:6%;bottom:8%;max-width:40%;z-index:60010;color:#ffa;opacity:0.0;pointer-events:none;font-size:16px}
-#shadow{position:fixed;right:-30%;top:10%;width:40%;height:80%;background:rgba(0,0,0,0.35);filter:blur(10px);opacity:0;z-index:5000;pointer-events:none}
-#cameraFake{position:fixed;top:6%;left:6%;width:160px;height:120px;border-radius:8px;border:2px solid rgba(255,255,255,0.04);background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.6));opacity:0;z-index:70000;display:flex;align-items:center;justify-content:center;color:#aaa}
-#heartbeat{position:fixed;left:12px;top:12px;width:40px;height:40px;border-radius:50%;background:rgba(255,0,0,0.06);box-shadow:0 0 10px rgba(255,0,0,0.1);opacity:0;z-index:60005}
-@keyframes pulse {0%{transform:scale(1);opacity:.25}50%{transform:scale(1.3);opacity:1}100%{transform:scale(1);opacity:.25}}
-#heartbeat.pulse{animation:pulse 1s infinite}
-.pin-box{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,0.85);padding:12px;border-radius:12px;border:2px solid rgba(255,255,255,0.04);z-index:60005;display:none}
-#pin-keypad{display:grid;grid-template-columns:repeat(3,64px);gap:8px;justify-content:center;margin-top:8px}
-.key{width:64px;height:64px;background:#111;border:2px solid rgba(255,255,255,0.04);color:#fff;font-size:22px;border-radius:8px;cursor:pointer}
-#pin-display{letter-spacing:6px;font-size:20px;background:transparent;border:none;color:#0f0;text-align:center}
-.lock-perm{position:fixed;inset:0;background:#000;color:#f55;display:none;align-items:center;justify-content:center;z-index:99999;font-size:22px}
-.small{font-size:12px;color:#bbb;margin-top:6px}
+  :root{--bg:#000;--red:#ff0033;--amber:#ffb74d;--text:#dfffdc}
+  html,body{height:100%;margin:0;background:#000;color:var(--text);font-family: "Lucida Console", Monaco, monospace;overflow:hidden}
+  /* full black initial */
+  #stage{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;flex-direction:column;z-index:10}
+  #hint{position:fixed;bottom:18px;left:18px;color:#999;font-size:13px;z-index:50}
+  /* machine hum visual */
+  #humVis{position:fixed;inset:0;z-index:9;pointer-events:none;opacity:0}
+  /* BIOS box */
+  #bios{width:92%;max-width:1100px;background:#000;color:#9ff;border:1px solid rgba(0,255,136,0.06);padding:18px;border-radius:6px;box-shadow:0 0 60px rgba(0,255,136,0.03);display:none;z-index:30}
+  #bios pre{white-space:pre-wrap;font-size:14px;line-height:1.25}
+  /* terminal scan */
+  #term{position:fixed;left:5%;bottom:6%;width:55%;height:36vh;background:#020202;border:2px solid #004400;color:#0f0;padding:12px;overflow:auto;z-index:45;display:none}
+  /* kernel panic */
+  #panic{position:fixed;inset:0;background:linear-gradient(180deg,#100 0%, #000 60%);color:var(--red);display:none;align-items:center;justify-content:center;flex-direction:column;z-index:60}
+  #panic h1{font-size:48px;letter-spacing:2px;text-shadow:0 0 30px rgba(255,0,0,0.6)}
+  #leak{margin-top:18px;background:rgba(0,0,0,0.85);padding:12px;border-radius:8px;border:1px solid rgba(255,0,0,0.12);max-width:90%;max-height:34vh;overflow:auto;color:#ffdcdc}
+  /* emergency unlock */
+  #emergency{position:fixed;right:18px;bottom:18px;z-index:80;display:none}
+  #unlockBtn{padding:12px 14px;background:#0c8;border:none;border-radius:8px;cursor:pointer}
+  /* subtle glitch layer */
+  #glitch{position:fixed;inset:0;z-index:40;pointer-events:none;opacity:0; background-image:url('https://i.ibb.co/6gBPM7w/glitch.gif'); background-size:cover}
+  /* accessibility */
+  .sr-only{position:absolute;left:-9999px}
 </style>
 </head>
 <body>
-<div id="noise"></div>
-<div id="scan"></div>
 
-<div id="warning"><h1>SYSTEM BREACH — OMEGA PROTOCOL</h1><p>FINAL ENCRYPTION STAGE</p></div>
-
-<div id="core">
-  <h1>OMEGA PROTOCOL INITIATED</h1>
-  <p>Seluruh sektor terkunci — fase Omega aktif.</p>
-  <div id="clock">05:00</div>
-  <div id="files"></div>
-  <div class="controls">
-    <button class="btn btn-danger" id="payBtn">INSTRUKSI PEMBAYARAN</button>
-    <button class="btn btn-ghost" id="decBtn">COBA DECRYPT</button>
+<div id="stage">
+  <div id="startBox">
+    <h2 style="color:var(--amber)">BLACKOUT PROTOCOL — READY</h2>
+    <p style="max-width:720px;text-align:center;color:#ccc">Tap / klik untuk mulai. (Perintah ini diperlukan agar audio & fullscreen berjalan di browser.)</p>
+    <button id="startBtn" style="padding:12px 20px;background:var(--red);border:none;color:#fff;border-radius:8px;cursor:pointer">MULAI PROTOKOL</button>
   </div>
 </div>
 
-<div id="modal">
-  <h3 style="color:var(--r);margin:0 0 10px 0">BAYAR VIA WHATSAPP</h3>
-  <p style="color:#eee;font-size:13px;margin-bottom:8px">Hubungi admin untuk instruksi lanjutan.</p>
-  <input value="+6281574684348" id="waNum" readonly style="width:100%;padding:8px;background:#111;color:#fff;border:1px solid #333;margin-bottom:8px" />
-  <button id="openWa" class="btn btn-ghost" style="width:100%">Hubungi</button>
+<div id="humVis" aria-hidden="true"></div>
+<div id="bios" role="region" aria-live="polite"><pre id="biosText"></pre></div>
+<div id="term" aria-live="polite"><pre id="termText">&gt; ready</pre></div>
+<div id="glitch"></div>
+
+<div id="panic" role="alert">
+  <h1>KERNEL PANIC — SYSTEM HALTED</h1>
+  <div id="leak"><strong>DATA LEAK (Simulasi Visual)</strong><div id="leakContent" style="margin-top:8px"></div></div>
 </div>
 
-<div id="overlay"><h1>ACCESS FINAL-LOCKED</h1><p class="small">Device locked permanently. Contact operator.</p></div>
-<div id="scare"><img src="https://i.ibb.co/3s5rD7p/screamer.png" /></div>
+<div id="emergency"><button id="unlockBtn">UNLOCK (EMERGENCY)</button></div>
 
-<div id="pin-container" class="pin-box" aria-hidden="true">
-  <div>Masukkan PIN untuk hentikan simulasi</div>
-  <input id="pin-display" type="text" value="" readonly />
-  <div id="pin-keypad">
-    <!-- keypad buttons -->
-  </div>
-  <div style="display:flex;gap:8px;margin-top:8px;justify-content:center">
-    <button id="pin-clear" class="key" style="width:auto;padding:8px 12px">CLEAR</button>
-    <button id="pin-submit" class="key" style="width:auto;padding:8px 12px;background:var(--r)">UNLOCK</button>
-  </div>
-  <div class="small">Kesempatan 3x salah → LOCK PERMANENT</div>
-</div>
-
-<div id="ghostMsg"></div>
-<div id="shadow"></div>
-<div id="cameraFake">Camera<br><small>Front</small></div>
-<div id="heartbeat"></div>
-
-<div id="startOverlay">
-  <div style="font-size:26px;margin-bottom:18px">SIMULATION READY — TAP TO START</div>
-  <button id="startBtn">TAP UNTUK MULAI</button>
-  <div class="small" style="margin-top:12px">(Tap diperlukan agar audio & fullscreen diizinkan)</div>
-</div>
-
-<div class="hint">Versi NERAKA MODE — Jangan gunakan pada orang yg rentan</div>
+<div id="hint">Gunakan hanya untuk prank. Tidak merusak file.</div>
 
 <!-- audio -->
-<audio id="amb" loop preload="auto"><source src="https://cdn.pixabay.com/audio/2022/03/15/audio_ef7b8e135b.mp3"></audio>
-<audio id="alert" preload="auto"><source src="https://assets.mixkit.co/sfx/preview/mixkit-bell-alert-610.mp3"></audio>
-<audio id="scream" preload="auto"><source src="https://files.catbox.moe/2lfk6k.mp3"></audio>
-<audio id="breath" preload="auto"><source src="https://cdn.pixabay.com/audio/2023/09/16/audio_3a3c8f2f2f.mp3"></audio> <!-- subtle breath -->
-<audio id="whisper" preload="auto"><source src="https://cdn.pixabay.com/audio/2024/02/12/audio_whisper_example.mp3"></audio> <!-- placeholder, may be silent on some hosts -->
+<audio id="hum" preload="auto" loop>
+  <source src="https://cdn.pixabay.com/audio/2022/08/02/audio_9e2f1a9b8b.mp3" type="audio/mp3">
+</audio>
+<audio id="biosBeep" preload="auto"><source src="https://assets.mixkit.co/sfx/preview/mixkit-system-startup-921.mp3" type="audio/mp3"></audio>
+<audio id="panicS" preload="auto"><source src="https://files.catbox.moe/2lfk6k.mp3" type="audio/mp3"></audio>
+<audio id="glitchS" preload="auto"><source src="https://assets.mixkit.co/sfx/preview/mixkit-arcade-retro-game-over-232.mp3" type="audio/mp3"></audio>
 
 <script>
-/* ===== CONFIG ===== */
-const PIN_CODE = '159753';               // default PIN — ubah jika perlu
-const MAX_WRONG = 3;
-const START_SECONDS = 300;               // 5 minutes (countdown)
-const GHOST_LINES = [
-  'aku melihatmu...',
-  'jangan berbalik.',
-  'kamu terlalu lama menatap layar itu.',
-  'aku tahu jammu sekarang.',
-  'jangan tekan apapun kecuali unlock.'
-];
-/* ================== */
+/*
+  LEVEL 8 — BLACKOUT PROTOCOL
+  - 100% visual client-side only.
+  - Sequence:
+    1) Start -> attempt fullscreen + hum sound
+    2) Fade to blackout
+    3) BIOS-style text appears (simulated)
+    4) Terminal scan (fake filenames)
+    5) Kernel panic screen + "data leak" display (userAgent/time only)
+    6) Emergency UNLOCK button appears to stop simulation
+*/
 
-let time = START_SECONDS;
-let started = false;
-let wrongAttempts = 0;
-let pinBuffer = '';
+const PIN_CODE = '159753'; // not required here; emergency unlock visible after final
+const startBtn = document.getElementById('startBtn');
+const hum = document.getElementById('hum');
+const bios = document.getElementById('bios');
+const biosText = document.getElementById('biosText');
+const term = document.getElementById('term');
+const termText = document.getElementById('termText');
+const panic = document.getElementById('panic');
+const leakContent = document.getElementById('leakContent');
+const panicS = document.getElementById('panicS');
+const biosBeep = document.getElementById('biosBeep');
+const glitchLayer = document.getElementById('glitch');
+const glitchS = document.getElementById('glitchS');
+const emergency = document.getElementById('emergency');
+const unlockBtn = document.getElementById('unlockBtn');
+const noise = document.getElementById('humVis');
 
-/* DOM */
-const filesEl = document.getElementById('files');
-const clockEl = document.getElementById('clock');
-const modal = document.getElementById('modal');
-const overlay = document.getElementById('overlay');
-const scare = document.getElementById('scare');
-const startOverlay = document.getElementById('startOverlay');
-const amb = document.getElementById('amb');
-const alertS = document.getElementById('alert');
-const scream = document.getElementById('scream');
-const breath = document.getElementById('breath');
-const whisper = document.getElementById('whisper');
-const ghostMsg = document.getElementById('ghostMsg');
-const shadow = document.getElementById('shadow');
-const cameraFake = document.getElementById('cameraFake');
-const heartbeat = document.getElementById('heartbeat');
-const pinContainer = document.getElementById('pin-container');
-const pinDisplay = document.getElementById('pin-display');
-const keypad = document.getElementById('pin-keypad');
-const pinSubmit = document.getElementById('pin-submit');
-const pinClear = document.getElementById('pin-clear');
-const hint = document.querySelector('.hint');
+let sequenceTimers = [];
 
-/* fake file list */
-const FAKE = [
-  'root/system32.dll','data/private.bin','wallet/seed.dat','photos/family_2024.jpg',
-  'notes/passwords.txt','archive/backup.zip','config/system.lock','media/video.mp4','documents/ID.pdf'
-];
-
-function renderFiles(){
-  filesEl.innerHTML = '';
-  FAKE.forEach(f=>{
-    const d = document.createElement('div'); d.className='file';
-    d.innerHTML = `<span>${f}</span><span style="color:#f88">LOCKED</span>`;
-    filesEl.appendChild(d);
+function q(el, ms){
+  return new Promise(res => {
+    const t = setTimeout(()=>{ res(); }, ms);
+    sequenceTimers.push(t);
   });
 }
-renderFiles();
 
-/* matrix + scan */
-const matrix = document.createElement('canvas');
-matrix.id = 'matrix';
-matrix.style.position = 'fixed'; matrix.style.inset = '0'; matrix.style.zIndex = '2'; matrix.style.opacity = '0.18'; matrix.style.pointerEvents='none';
-document.body.appendChild(matrix);
-const ctx = matrix.getContext('2d');
-function fit(){ matrix.width = innerWidth; matrix.height = innerHeight; }
-fit(); window.addEventListener('resize', fit);
-let drops = Array(Math.floor(window.innerWidth/10)).fill(1);
-function drawMatrix(){
-  ctx.fillStyle='rgba(0,0,0,0.06)'; ctx.fillRect(0,0,matrix.width,matrix.height);
-  ctx.fillStyle='#00ff77'; ctx.font='14px monospace';
-  for(let i=0;i<drops.length;i++){
-    ctx.fillText(Math.random()>0.5?'1':'0', i*10, drops[i]*14);
-    if(drops[i]*14 > matrix.height && Math.random()>0.975) drops[i]=0;
-    drops[i]++;
+function clearSequence(){
+  sequenceTimers.forEach(t => clearTimeout(t));
+  sequenceTimers = [];
+}
+
+function safeFullscreen(){
+  try{ document.documentElement.requestFullscreen?.(); }catch(e){}
+}
+
+// small helper to type text
+function typeTo(el, text, speed=24){
+  return new Promise(res=>{
+    let i=0;
+    const t = setInterval(()=>{
+      el.textContent += text.charAt(i++) || '';
+      el.scrollTop = el.scrollHeight;
+      if(i>text.length) { clearInterval(t); res(); }
+    }, speed);
+    sequenceTimers.push(t);
+  });
+}
+
+startBtn.addEventListener('click', async ()=>{
+  // remove start UI
+  document.getElementById('startBox').remove();
+  // try full screen & start hum
+  safeFullscreen();
+  hum.volume = 0.5; hum.play().catch(()=>{});
+  // quick beep
+  biosBeep.play().catch(()=>{});
+  // brief flash then blackout
+  document.body.style.transition = 'background 1s ease';
+  document.body.style.background = '#050505';
+  await q(null, 700);
+  document.body.style.background = '#000';
+  // show BIOS console
+  bios.style.display = 'block';
+  biosText.textContent = '';
+  const lines = [
+    "PhoenixBIOS v3.14.7 initializing...",
+    "CPU: Secure Core Boot [OK]",
+    "Memory check: 8192MB [OK]",
+    "Disk controller: RAID-0 [OK]",
+    "S.M.A.R.T. Unknown sectors found... [!]",
+    "Attempting low-level repair...",
+    "Permission escalation: SUCCESS",
+    "Mounting user partitions...",
+    "Accessing /home/* user directories...",
+    ""
+  ];
+  // type lines
+  for(const ln of lines){
+    await typeTo(biosText, ln + '\\n', 24);
+    if(Math.random()>0.6) { glitchLayer.style.opacity = 0.35; glitchS.currentTime=0; glitchS.play().catch(()=>{}); }
+    await q(null, 350 + Math.random()*350);
+    glitchLayer.style.opacity = 0;
   }
-}
+  // show terminal scan
+  bios.style.display = 'none';
+  term.style.display = 'block';
+  termText.textContent = '';
+  const fakeFiles = [
+    "/home/user/Documents/Tax_2025.pdf",
+    "/home/user/Photos/family_birthday.jpg",
+    "/home/user/wallets/wallet_backup.dat",
+    "/home/user/Work/project_secret.ai",
+    "/home/user/Notes/passwords.txt",
+    "/mnt/usb/backup/system.img",
+    "/var/lib/mailbox/attachments.zip",
+    "/home/user/Videos/fun.mp4",
+    "/home/user/Archives/important.zip"
+  ];
+  // simulate scanning lines, with small random delays
+  for(let f of fakeFiles){
+    await typeTo(termText, `scanning ${f} ... `, 8);
+    // fake result
+    const ok = Math.random() > 0.35;
+    await typeTo(termText, ok ? "OK\\n" : "ERROR (locked)\\n", 10);
+    termText.scrollTop = termText.scrollHeight;
+    if(Math.random() > 0.7){ glitchLayer.style.opacity = 0.3; glitchS.currentTime=0; glitchS.play().catch(()=>{}); }
+    await q(null, 350 + Math.random()*500);
+    glitchLayer.style.opacity = 0;
+  }
 
-/* TERMINAL SIM */
-const terminal = document.createElement('div');
-terminal.style.position='fixed'; terminal.style.left='6%'; terminal.style.bottom='6%'; terminal.style.width='420px'; terminal.style.height='220px';
-terminal.style.background='#020202'; terminal.style.border='2px solid #003300'; terminal.style.color='#0f0';
-terminal.style.padding='12px'; terminal.style.overflow='auto'; terminal.style.fontSize='13px'; terminal.style.zIndex='10005';
-terminal.textContent = '> ready';
-document.body.appendChild(terminal);
-
-/* keypad build */
-function buildKeypad(){
-  keypad.innerHTML = '';
-  const nums = ['1','2','3','4','5','6','7','8','9','0'];
-  nums.forEach(n=>{
-    const b = document.createElement('button');
-    b.className = 'key'; b.textContent = n;
-    b.addEventListener('click', ()=>{ if(pinBuffer.length<6){ pinBuffer += n; pinDisplay.value = '*'.repeat(pinBuffer.length);} });
-    keypad.appendChild(b);
-  });
-}
-buildKeypad();
-
-/* ghost typing */
-let ghostIndex = 0;
-function ghostTyping(){
-  ghostMsg.style.opacity = '1';
-  const line = GHOST_LINES[Math.floor(Math.random()*GHOST_LINES.length)];
-  let i=0; ghostMsg.textContent='';
-  const t = setInterval(()=>{
-    ghostMsg.textContent += line[i++]||'';
-    if(i>line.length){ clearInterval(t); setTimeout(()=>ghostMsg.style.opacity='0', 3000); }
-  }, 80);
-}
-
-/* shadow drift */
-function shadowPulse(){
-  shadow.style.opacity = 0.22;
-  shadow.style.transform = `translateX(-40px)`;
-  setTimeout(()=> shadow.style.opacity = 0, 900);
-}
-
-/* camera fake blink */
-function cameraBlink(){
-  cameraFake.style.opacity = 1;
-  setTimeout(()=> cameraFake.style.opacity = 0, 1500);
-}
-
-/* heartbeat */
-function startHeartbeat(){
-  heartbeat.classList.add('pulse'); heartbeat.style.opacity = 1;
-}
-
-/* personal attack: show device info in terminal */
-function leakDeviceInfo(){
+  // short pause then kernel panic
+  await q(null, 800);
+  term.style.display = 'none';
+  panic.style.display = 'flex';
+  panicS.currentTime = 0; panicS.play().catch(()=>{});
+  glitchLayer.style.opacity = 0.6;
+  // show leak info (safe, non-sensitive)
   const ua = navigator.userAgent || 'Unknown';
   const locale = navigator.language || 'id-ID';
-  const t = new Date(); const timeStr = t.toLocaleTimeString();
-  terminal.textContent += `\n> Device: ${ua}\n> Locale: ${locale}\n> Time: ${timeStr}\n`;
-  terminal.scrollTop = terminal.scrollHeight;
-}
+  const now = new Date();
+  const leakHtml = `
+    <div><strong>Device Info (simulated):</strong></div>
+    <div>User Agent: ${escapeHtml(ua)}</div>
+    <div>Locale: ${escapeHtml(locale)}</div>
+    <div>Local time: ${escapeHtml(now.toString())}</div>
+    <div style="margin-top:10px"><strong>Leaked sample file list (visual):</strong></div>
+    <ul>
+      <li>Contacts_backup.csv</li>
+      <li>Photos/birthday_2024.jpg</li>
+      <li>notes_private.txt</li>
+    </ul>
+  `;
+  leakContent.innerHTML = leakHtml;
 
-/* micro-freeze: short freeze effect */
-function microFreeze(){
-  document.body.style.transition = 'transform .12s ease';
-  document.body.style.transform = 'scale(0.995)';
-  setTimeout(()=> document.body.style.transform = 'scale(1)', 250);
-  // play breath
-  breath.currentTime = 0; breath.play().catch(()=>{});
-}
-
-/* jumpscare */
-function doJumpscare(){
-  try{ scream.currentTime = 0; scream.play().catch(()=>{}); }catch(e){}
-  scare.style.display = 'flex';
-  setTimeout(()=> scare.style.display = 'none', 1600);
-}
-
-/* flash */
-function flashOnce(){ document.getElementById('flash').style.opacity = 0.9; setTimeout(()=>document.getElementById('flash').style.opacity = 0,120); }
-
-/* start sequence */
-let matrixI,popupI,scanI,countI,ghostI,shadowI;
-function startAll(){
-  if(started) return;
-  started = true;
-  startOverlay.remove();
-  // fullscreen attempt
-  try{ document.documentElement.requestFullscreen().catch(()=>{}); }catch(e){}
-  // audio
-  amb.volume = 0.45; amb.play().catch(()=>{});
-  // matrix
-  matrixI = setInterval(drawMatrix, 40);
-  // scan pulse
-  scanI = setInterval(()=>{ document.getElementById('scan').style.opacity = 1; setTimeout(()=>document.getElementById('scan').style.opacity=0,200); }, 300);
-  // ghost typing occasionally
-  ghostI = setInterval(ghostTyping, 9000);
-  // shadow drift
-  shadowI = setInterval(shadowPulse, 7000);
-  // camera blink
-  setInterval(cameraBlink, 12000);
-  // heartbeat
-  startHeartbeat();
-  // leak device info once
-  setTimeout(leakDeviceInfo, 1200);
-  // micro freeze sometimes
-  setInterval(microFreeze, 17000 + Math.random()*12000);
-  // spawn popups & audio
-  popupI = setInterval(()=>{ alertS.play().catch(()=>{}); }, 7000);
-  // countdown
-  clockEl.textContent = format(time);
-  countI = setInterval(()=>{
-    time--;
-    clockEl.textContent = format(time);
-    // mark files encrypted gradually
-    if(time % 18 === 0){
-      const idx = Math.floor(Math.random()*FAKE.length);
-      const el = filesEl.children[idx];
-      if(el) el.querySelector('span:last-child').textContent = 'ENCRYPTED';
-    }
-    // psychological whispers close to end
-    if(time === 45){ whisper.currentTime=0; whisper.play().catch(()=>{}); ghostTyping(); }
-    if(time === 15){ breath.currentTime=0; breath.play().catch(()=>{}); flashOnce(); }
-    if(time === 0){ clearInterval(countI); // show PIN keypad only now
-      pinContainer.style.display = 'block';
-      pinContainer.setAttribute('aria-hidden','false');
-      // hint: enable keypad visually, small prompt
-      pinDisplay.placeholder = '••••••';
-      // subtle TTS
-      speak('Countdown selesai. Masukkan PIN untuk hentikan proses.', 0.95, 0.6);
-    }
-  }, 1000);
-}
-
-/* PIN logic */
-function speak(txt, rate=1.0, pitch=0.7){
-  if(!('speechSynthesis' in window)) return;
-  const u = new SpeechSynthesisUtterance(txt); u.rate = rate; u.pitch = pitch;
-  try{ speechSynthesis.cancel(); speechSynthesis.speak(u);}catch(e){}
-}
-
-pinSubmit.addEventListener('click', ()=>{ checkPin(); });
-pinClear.addEventListener('click', ()=>{ pinBuffer=''; pinDisplay.value=''; });
-
-function checkPin(){
-  if(pinBuffer.length===0) return;
-  if(pinBuffer === PIN_CODE){
-    // success: stop everything cleanly
-    clearAll();
-    alert('PIN benar — Simulasi dihentikan. Tidak ada file yang tersentuh.');
-    // gentle reveal
-    const msg = document.createElement('div'); msg.className='pop'; msg.style.position='fixed'; msg.style.top='50%'; msg.style.left='50%'; msg.style.transform='translate(-50%,-50%)'; msg.style.background='#023'; msg.style.border='2px solid #0f0'; msg.style.color='#0f0'; msg.style.padding='12px 16px'; msg.style.zIndex=99999; msg.textContent='PRANK STOPPED — Ini hanya simulasi.'; document.body.appendChild(msg);
-    setTimeout(()=> msg.remove(),5000);
-    pinContainer.style.display='none';
-    return;
-  } else {
-    wrongAttempts++;
-    doJumpscare(); flashOnce(); vibrate();
-    pinBuffer=''; pinDisplay.value='';
-    // speak taunt
-    speak(['PIN salah','Jangan panik','Coba lagi jika berani'][Math.floor(Math.random()*3)],1.0,0.6);
-    if(wrongAttempts>=MAX_WRONG){
-      // permanent lock
-      clearAll();
-      document.querySelector('.lock-perm')?.remove();
-      const lock = document.createElement('div'); lock.className='lock-perm'; lock.style.display='flex'; lock.innerHTML = '<div><h2>DEVICE LOCKED</h2><p>Terjadi percobaan unlock berulang. Hubungi operator.</p></div>';
-      document.body.appendChild(lock);
-      // show overlay
-      overlay.style.display='flex';
-      // final scream
-      try{ scream.currentTime=0; scream.play().catch(()=>{});}catch(e){}
-      return;
-    }
-  }
-}
-
-/* vibrate helper */
-function vibrate(){
-  if(navigator.vibrate) navigator.vibrate([200,120,200]);
-}
-
-/* clear/stop everything */
-function clearAll(){
-  try{ speechSynthesis.cancel(); }catch(e){}
-  clearInterval(matrixI); clearInterval(popupI); clearInterval(scanI); clearInterval(countI); clearInterval(ghostI); clearInterval(shadowI);
-  amb.pause(); alertS.pause(); scream.pause(); breath.pause(); whisper.pause();
-  // hide visuals
-  document.getElementById('scan').style.opacity=0;
-  document.getElementById('warning').style.opacity=0;
-  startOverlay.style.display='none';
-  document.getElementById('noise').style.opacity=0.05;
-  // remove intrusive elements
-  cameraFake.style.opacity=0;
-  shadow.style.opacity=0;
-  ghostMsg.style.opacity=0;
-  heartbeat.style.opacity=0; heartbeat.classList.remove('pulse');
-}
-
-/* utility */
-function format(s){ const m=String(Math.floor(s/60)).padStart(2,'0'); const x=String(s%60).padStart(2,'0'); return `${m}:${x}`; }
-
-/* UI hooks */
-document.getElementById('startBtn').addEventListener('click', ()=>{ startAll(); });
-document.getElementById('payBtn').addEventListener('click', ()=>{ modal.style.display='block'; speak('Jendela pembayaran dibuka'); });
-document.getElementById('decBtn').addEventListener('click', ()=>{ speak('Mencoba dekripsi'); flashOnce(); spawnPopupFake(); setTimeout(()=>alert('DEKRIPSI GAGAL — KUNCI TIDAK DITEMUKAN'),800); });
-document.getElementById('openWa').addEventListener('click', ()=>{ const num = document.getElementById('waNum').value.replace(/[^0-9+]/g,''); window.open(`https://wa.me/${num.replace(/^\+/, '')}`,'_blank'); });
-
-/* fake popup (visual only) */
-function spawnPopupFake(){
-  const p = document.createElement('div'); p.className='pop';
-  p.textContent='⚠ WRITE ERROR';
-  p.style.position='fixed'; p.style.top=(10+Math.random()*70)+'%'; p.style.left=(10+Math.random()*70)+'%';
-  p.style.padding='10px 14px'; p.style.background='#111'; p.style.border='2px solid var(--r)'; p.style.color='#f88'; p.style.zIndex=99999;
-  document.body.appendChild(p); setTimeout(()=>p.remove(),2000 + Math.random()*2000);
-}
-
-/* safety console note */
-console.log('FINAL NERAKA MODE loaded — VISUAL ONLY. No file access.');
-
-/* keyboard entry support (optional) */
-window.addEventListener('keydown', (e)=>{
-  if(pinContainer.style.display==='block'){
-    if(/^[0-9]$/.test(e.key) && pinBuffer.length<6){ pinBuffer+=e.key; pinDisplay.value='*'.repeat(pinBuffer.length) }
-    if(e.key==='Backspace'){ pinBuffer = pinBuffer.slice(0,-1); pinDisplay.value='*'.repeat(pinBuffer.length) }
-    if(e.key==='Enter') checkPin();
-  }
+  // emergency unlock appears after 4s on panic
+  await q(null, 4000);
+  emergency.style.display = 'block';
+  // subtle pulsing glitch off after some time
+  setTimeout(()=>{ glitchLayer.style.opacity = 0.2; }, 2000);
 });
 
-</script>
+// unlock handler: stop everything and reveal safe message
+unlockBtn.addEventListener('click', () => {
+  // stop audio & timers
+  hum.pause(); biosBeep.pause(); panicS.pause(); glitchS.pause();
+  clearSequence();
+  // hide intrusive visuals
+  panic.style.display = 'none';
+  term.style.display = 'none';
+  bios.style.display = 'none';
+  glitchLayer.style.opacity = 0;
+  emergency.style.display = 'none';
+  // reveal safe message
+  const s = document.createElement('div');
+  s.style.position = 'fixed'; s.style.inset='0'; s.style.zIndex='99999'; s.style.display='flex'; s.style.alignItems='center'; s.style.justifyContent='center'; s.style.background='rgba(0,0,0,0.9)';
+  s.innerHTML = '<div style="max-width:800px;padding:20px;background:#061; border-radius:10px; color:#dff; text-align:center"><h2>PRANK BERAKHIR — Aman!</h2><p>Tidak ada file yang rusak. Ini hanya simulasi visual untuk prank.</p><button id="closeReveal" style="margin-top:12px;padding:10px 14px;border-radius:8px;background:#0c8;border:none;cursor:pointer">Tutup</button></div>';
+  document.body.appendChild(s);
+  document.getElementById('closeReveal').addEventListener('click', ()=>{ s.remove(); location.reload(); });
+});
 
+// small helpers
+function escapeHtml(s){ return String(s).replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;'); }
+
+// accessibility: also allow pressing ESC to show emergency if user panics
+window.addEventListener('keydown', (e)=>{
+  if(e.key === 'Escape'){ emergency.style.display = 'block'; }
+});
+
+/* fallback safety: if user doesn't start, show small hint */
+setTimeout(()=>{
+  if(document.getElementById('startBox')){ document.getElementById('startBox').style.opacity = 1; }
+}, 1000);
+
+</script>
 </body>
   </html>
