@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Ransomware Simulation</title>
+<title>System Breached</title>
 
 <style>
     body {
@@ -15,30 +15,52 @@
         text-align: center;
     }
 
+    #glitch {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: url('https://i.ibb.co/6gBPM7w/glitch.gif') center/cover;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.1s ease;
+    }
+
+    #flash {
+        position: fixed;
+        top: 0; left: 0;
+        width: 100%; height: 100%;
+        background: red;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.1s ease;
+    }
+
     .typewriter {
-        font-size: 22px;
         margin-top: 40px;
+        font-size: 24px;
         white-space: pre-line;
     }
 
     #warning-box {
         width: 90%;
         margin: 40px auto;
-        padding: 20px;
-        border: 2px solid red;
+        padding: 25px;
+        border: 3px solid red;
         color: red;
-        font-size: 20px;
+        font-size: 24px;
         display: none;
-        animation: blink 1s infinite;
+        animation: blink 0.4s infinite;
     }
 
     @keyframes blink {
-        50% { opacity: 0.3; }
+        50% { opacity: 0.2; }
     }
 
     #progress {
-        margin-top: 40px;
-        font-size: 18px;
+        font-size: 22px;
+        margin-top: 50px;
         display: none;
     }
 
@@ -46,77 +68,81 @@
         display: none;
         margin-top: 50px;
         padding: 15px 25px;
+        font-size: 20px;
         background: red;
         border: none;
-        font-size: 18px;
         color: white;
         cursor: pointer;
-    }
-
-    /* Efek flash merah */
-    #flash {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: red;
-        opacity: 0;
-        pointer-events: none;
-        transition: opacity 0.2s ease;
+        box-shadow: 0 0 20px red;
     }
 </style>
 </head>
 
 <body>
 
-<!-- Flash merah -->
 <div id="flash"></div>
+<div id="glitch"></div>
 
-<!-- Teks mengetik -->
 <div class="typewriter" id="text"></div>
 
-<!-- Warning box -->
-<div id="warning-box">
-    ❗ SYSTEM LOCKED ❗  
-    DO NOT TURN OFF YOUR DEVICE!
-</div>
+<div id="warning-box">⚠ SYSTEM LOCKED ⚠</div>
 
-<!-- Progress palsu -->
-<div id="progress">Encrypting files... <span id="percent">0%</span></div>
+<div id="progress">Encrypting Sensitive Files... <span id="percent">0%</span></div>
 
-<!-- Tombol decrypt -->
-<button id="decrypt-btn">DECRYPT FILES</button>
+<button id="decrypt-btn">DECRYPT NOW</button>
+
 
 <!-- SUARA -->
-<audio id="beep" src="https://assets.mixkit.co/sfx/preview/mixkit-system-beep-buzzer-fail-2964.mp3"></audio>
-<audio id="horror" src="https://cdn.pixabay.com/audio/2022/03/15/audio_ef7b8e135b.mp3" loop></audio>
+<audio id="beep" src="https://assets.mixkit.co/sfx/preview/mixkit-warning-alarm-buzzer-991.mp3"></audio>
+<audio id="horror" src="https://cdn.pixabay.com/audio/2022/02/14/audio_2c4866f2d1.mp3" loop></audio>
+<audio id="glitchSound" src="https://cdn.pixabay.com/audio/2023/03/30/audio_4ebd0753f0.mp3"></audio>
+
 
 <script>
-const text = [
-    "Initializing system override...",
-    "Accessing filesystem...",
-    "WARNING: Unauthorized access detected!",
-    "Encrypting user files...",
+// FULLSCREEN OTOMATIS
+document.documentElement.requestFullscreen?.();
+
+const lines = [
+    "Initializing Kernel Exploit...",
+    "Bypassing Security Protocols...",
+    "Accessing Root System...",
+    "BREACH CONFIRMED!",
+    "Encrypting User Partitions...",
     ""
 ];
 
 let i = 0;
-let speed = 60;
+let speed = 45;
 
-function playHorror() {
-    let h = document.getElementById("horror");
-    h.volume = 0.5;
+function playAudio() {
+    const h = document.getElementById("horror");
+    h.volume = 0.7;
     h.play();
+}
+
+function glitchEffect() {
+    const g = document.getElementById("glitch");
+    const s = document.getElementById("glitchSound");
+
+    setInterval(() => {
+        g.style.opacity = Math.random() > 0.7 ? "0.8" : "0";
+        if (Math.random() > 0.75) s.play();
+    }, 120);
+}
+
+function flash() {
+    const f = document.getElementById("flash");
+    f.style.opacity = 1;
+    setTimeout(() => f.style.opacity = 0, 100);
 }
 
 function typeWriter() {
     let container = document.getElementById("text");
-    if (i < text.length) {
-        container.innerHTML += text[i] + "<br>";
+    if (i < lines.length) {
+        container.innerHTML += lines[i] + "<br>";
 
-        // bunyi beep tiap teks
         document.getElementById("beep").play();
+        flash();
 
         i++;
         setTimeout(typeWriter, speed);
@@ -129,38 +155,32 @@ function startEncryption() {
     document.getElementById("warning-box").style.display = "block";
     document.getElementById("progress").style.display = "block";
 
-    playHorror(); // mulai suara horor
+    playAudio();
+    glitchEffect();
 
-    // flash merah
-    flashEffect();
+    navigator.vibrate?.([300, 200, 300]); // GETAR HP
 
     let percent = 0;
     let interval = setInterval(() => {
-        percent += Math.floor(Math.random() * 7) + 1;
+        percent += Math.floor(Math.random() * 13) + 5;
+
         if (percent >= 100) {
             percent = 100;
             clearInterval(interval);
-            finishScreen();
+            finish();
         }
+
         document.getElementById("percent").innerText = percent + "%";
-    }, 200);
+    }, 180);
 }
 
-function flashEffect() {
-    let flash = document.getElementById("flash");
-    setInterval(() => {
-        flash.style.opacity = Math.random() * 0.5;
-        setTimeout(() => flash.style.opacity = 0, 150);
-    }, 800);
-}
-
-function finishScreen() {
-    document.getElementById("text").innerHTML += "<br>FILES ENCRYPTED SUCCESSFULLY.<br>";
+function finish() {
+    document.getElementById("text").innerHTML += "<br>ENCRYPTION COMPLETE.<br>";
     document.getElementById("decrypt-btn").style.display = "inline-block";
 }
 
-document.getElementById("decrypt-btn").onclick = function () {
-    alert("MAMPUS LU SEMUA DATA DAN FILE LU UDAH AMBIL☠️.");
+document.getElementById("decrypt-btn").onclick = () => {
+    alert("☠️ SEMUA DATA LU GW AMBIL!!🚀🚀");
 };
 
 typeWriter();
