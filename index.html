@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ransomware Simulation</title>
+<style>
+    body {
+        margin: 0;
+        font-family: Consolas, monospace;
+        background: black;
+        color: #00ff00;
+        overflow: hidden;
+        text-align: center;
+    }
+
+    .typewriter {
+        font-size: 22px;
+        margin-top: 40px;
+        white-space: pre-line;
+    }
+
+    #warning-box {
+        width: 90%;
+        margin: 40px auto;
+        padding: 20px;
+        border: 2px solid red;
+        color: red;
+        font-size: 20px;
+        display: none;
+        animation: blink 1s infinite;
+    }
+
+    @keyframes blink {
+        50% { opacity: 0.3; }
+    }
+
+    #progress {
+        margin-top: 40px;
+        font-size: 18px;
+        display: none;
+    }
+
+    #decrypt-btn {
+        display: none;
+        margin-top: 50px;
+        padding: 15px 25px;
+        background: red;
+        border: none;
+        font-size: 18px;
+        color: white;
+        cursor: pointer;
+    }
+</style>
+</head>
+
+<body>
+
+<div class="typewriter" id="text"></div>
+
+<div id="warning-box">
+    ❗ YOUR SYSTEM IS LOCKED ❗  
+    DO NOT TURN OFF YOUR DEVICE!
+</div>
+
+<div id="progress">Encrypting files... <span id="percent">0%</span></div>
+
+<button id="decrypt-btn">DECRYPT FILES</button>
+
+<script>
+const text = [
+    "Initializing system override...",
+    "Accessing filesystem...",
+    "WARNING: Unauthorized access detected!",
+    "Encrypting user files...",
+    ""
+];
+
+let i = 0;
+let speed = 70;
+
+function typeWriter() {
+    let container = document.getElementById("text");
+    if (i < text.length) {
+        container.innerHTML += text[i] + "<br>";
+        i++;
+        setTimeout(typeWriter, speed);
+    } else {
+        startEncryption();
+    }
+}
+
+function startEncryption() {
+    document.getElementById("warning-box").style.display = "block";
+    document.getElementById("progress").style.display = "block";
+
+    let percent = 0;
+    let interval = setInterval(() => {
+        percent += Math.floor(Math.random() * 5) + 1;
+        if (percent >= 100) {
+            percent = 100;
+            clearInterval(interval);
+            finishScreen();
+        }
+        document.getElementById("percent").innerText = percent + "%";
+    }, 200);
+}
+
+function finishScreen() {
+    document.getElementById("text").innerHTML += "<br>FILES ENCRYPTED SUCCESSFULLY.<br>";
+    document.getElementById("decrypt-btn").style.display = "inline-block";
+}
+
+document.getElementById("decrypt-btn").onclick = function () {
+    alert("😂 Ini cuma prank bro! Tidak ada file yang terenkripsi.");
+};
+
+typeWriter();
+</script>
+
+</body>
+</html>
