@@ -1,190 +1,307 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>System Breached</title>
-
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>!!! CRITICAL: SYSTEM LOCKED !!!</title>
 <style>
-    body {
-        margin: 0;
-        font-family: Consolas, monospace;
-        background: black;
-        color: #00ff00;
-        overflow: hidden;
-        text-align: center;
-    }
-
-    #glitch {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: url('https://i.ibb.co/6gBPM7w/glitch.gif') center/cover;
-        opacity: 0;
-        pointer-events: none;
-        transition: opacity 0.1s ease;
-    }
-
-    #flash {
-        position: fixed;
-        top: 0; left: 0;
-        width: 100%; height: 100%;
-        background: red;
-        opacity: 0;
-        pointer-events: none;
-        transition: opacity 0.1s ease;
-    }
-
-    .typewriter {
-        margin-top: 40px;
-        font-size: 24px;
-        white-space: pre-line;
-    }
-
-    #warning-box {
-        width: 90%;
-        margin: 40px auto;
-        padding: 25px;
-        border: 3px solid red;
-        color: red;
-        font-size: 24px;
-        display: none;
-        animation: blink 0.4s infinite;
-    }
-
-    @keyframes blink {
-        50% { opacity: 0.2; }
-    }
-
-    #progress {
-        font-size: 22px;
-        margin-top: 50px;
-        display: none;
-    }
-
-    #decrypt-btn {
-        display: none;
-        margin-top: 50px;
-        padding: 15px 25px;
-        font-size: 20px;
-        background: red;
-        border: none;
-        color: white;
-        cursor: pointer;
-        box-shadow: 0 0 20px red;
-    }
+  :root{--red:#ff0033;--warn:#ffb74d;--bg:#000;--green:#00ff88}
+  html,body{height:100%;margin:0;background:#000;color:var(--red);font-family: "Lucida Console", Monaco, monospace;overflow:hidden}
+  /* wrap */
+  #wrap{position:relative;width:100%;height:100%;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:12px}
+  #title{font-size:clamp(22px,6vw,64px);text-align:center;text-shadow:0 0 30px rgba(255,0,0,0.6)}
+  #subtitle{font-size:16px;opacity:0.9;text-align:center}
+  #count{font-size:48px;color:var(--warn);text-shadow:0 0 20px rgba(255,180,77,0.6)}
+  /* fake file list */
+  #filebox{position:relative;width:85%;max-width:980px;height:38vh;background:#06060655;border:2px solid rgba(0,255,136,0.06);overflow:auto;padding:14px;border-radius:8px;color:#d0ffd9;text-align:left;box-shadow:0 0 30px #00ff8044}
+  .file{display:flex;justify-content:space-between;padding:6px 8px;border-bottom:1px dashed rgba(255,255,255,0.03)}
+  .fleft{font-size:15px}
+  .fright{font-size:14px;color:#ffa8a8}
+  /* overlay lock */
+  #overlay{position:fixed;inset:0;background:rgba(0,0,0,0.95);z-index:9998;display:none;align-items:center;justify-content:center;flex-direction:column}
+  #overlay h1{color:var(--red);font-size:36px;margin:0;text-shadow:0 0 20px red}
+  #overlay p{color:#fff;opacity:0.9}
+  /* modal extortion (visual only) */
+  #ransom{position:fixed;right:6%;top:10%;width:360px;background:#0a0a0a;border:3px solid var(--red);padding:14px;z-index:9999;box-shadow:0 0 40px rgba(255,0,0,0.25);display:none}
+  #ransom h3{margin:0 0 8px 0;color:var(--red)}
+  #ransom p{font-size:13px;color:#fff;opacity:0.95}
+  #decryptBtn{margin-top:12px;padding:10px 14px;background:var(--red);border:none;color:#fff;cursor:pointer;border-radius:6px}
+  /* jumpscare */
+  #scare{position:fixed;inset:0;background:#000;display:none;align-items:center;justify-content:center;z-index:10001}
+  #scare img{max-width:96%;max-height:96%;transform:scale(1.05);filter:contrast(140%) brightness(120%)}
+  /* flash & glitch */
+  #flash{position:fixed;inset:0;background:var(--red);opacity:0;pointer-events:none;z-index:10000}
+  #glitchLayer{position:fixed;inset:0;background:url('https://i.ibb.co/6gBPM7w/glitch.gif') center/cover;opacity:0;pointer-events:none;z-index:9997}
+  /* stop button */
+  #stopBtn{position:fixed;left:18px;bottom:18px;padding:12px 16px;background:#0c8;border:none;border-radius:8px;color:#002;z-index:10002;cursor:pointer;box-shadow:0 0 20px #0c8}
+  /* matrix canvas */
+  #matrix{position:fixed;inset:0;pointer-events:none;opacity:0.27;z-index:4}
+  /* small helper */
+  .popHint{position:fixed;bottom:18px;right:18px;background:#111;border:2px solid rgba(255,255,255,0.06);padding:8px 10px;border-radius:6px;color:#eee;z-index:10003}
 </style>
 </head>
-
 <body>
+  <canvas id="matrix"></canvas>
+  <div id="glitchLayer"></div>
+  <div id="flash"></div>
 
-<div id="flash"></div>
-<div id="glitch"></div>
+  <div id="wrap" tabindex="0">
+    <div id="title">!!! CRITICAL SYSTEM BREACH !!!</div>
+    <div id="subtitle">All user partitions locked. Personal files encrypted.</div>
+    <div id="count">02:00</div>
 
-<div class="typewriter" id="text"></div>
+    <div id="filebox" aria-hidden="true"></div>
 
-<div id="warning-box">⚠ SYSTEM LOCKED ⚠</div>
+    <div style="display:flex;gap:10px;align-items:center">
+      <button id="fakeDecrypt" style="padding:10px 14px;background:rgba(255,0,0,0.9);border:none;color:#fff;border-radius:6px;cursor:pointer">TRY DECRYPT</button>
+      <button id="fakePay" style="padding:10px 14px;background:#222;border:2px solid #ff4444;color:#ffb8b8;border-radius:6px;cursor:pointer">VIEW INSTRUCTIONS</button>
+    </div>
+  </div>
 
-<div id="progress">Encrypting Sensitive Files... <span id="percent">0%</span></div>
+  <div id="ransom" role="dialog" aria-modal="true">
+    <h3>PAYMENT REQUIRED</h3>
+    <p>Your files are encrypted. Send payment to the attacker wallet to receive recovery key. This is a visual simulation. No files harmed.</p>
+    <button id="decryptBtn">SIMULATE PAYMENT / DECRYPT</button>
+  </div>
 
-<button id="decrypt-btn">DECRYPT NOW</button>
+  <div id="overlay" role="alert">
+    <h1>ACCESS DENIED</h1>
+    <p>System integrity compromised. Awaiting instructions.</p>
+  </div>
 
+  <div id="scare"><img src="https://i.ibb.co/3s5rD7p/screamer.png" alt="jumpscare"/></div>
 
-<!-- SUARA -->
-<audio id="beep" src="https://assets.mixkit.co/sfx/preview/mixkit-warning-alarm-buzzer-991.mp3"></audio>
-<audio id="horror" src="https://cdn.pixabay.com/audio/2022/02/14/audio_2c4866f2d1.mp3" loop></audio>
-<audio id="glitchSound" src="https://cdn.pixabay.com/audio/2023/03/30/audio_4ebd0753f0.mp3"></audio>
+  <button id="stopBtn">PRANK STOP</button>
+  <div class="popHint">Tap the screen to START the simulation</div>
 
+<!-- AUDIO SOURCES (public links) -->
+<audio id="ambience" loop preload="auto">
+  <source src="https://cdn.pixabay.com/audio/2022/03/15/audio_ef7b8e135b.mp3" type="audio/mp3">
+</audio>
+<audio id="alarm" preload="auto">
+  <source src="https://assets.mixkit.co/sfx/preview/mixkit-bell-alert-610.mp3" type="audio/mp3">
+</audio>
+<audio id="screamer" preload="auto">
+  <source src="https://files.catbox.moe/2lfk6k.mp3" type="audio/mp3">
+</audio>
 
 <script>
-// FULLSCREEN OTOMATIS
-document.documentElement.requestFullscreen?.();
+/* ========== CONFIG ========== */
+const START_SECONDS = 120;
+const POPUP_FREQ = 600;
+const FLASH_FREQ = 500;
+const JUMPSCARE_AT = 7; // seconds left to major jumpscare
+let remaining = START_SECONDS;
+const countEl = document.getElementById('count');
+const filebox = document.getElementById('filebox');
+const ransom = document.getElementById('ransom');
+const overlay = document.getElementById('overlay');
+const glitchLayer = document.getElementById('glitchLayer');
+const flash = document.getElementById('flash');
+const scare = document.getElementById('scare');
+const amb = document.getElementById('ambience');
+const alarm = document.getElementById('alarm');
+const screamer = document.getElementById('screamer');
+const stopBtn = document.getElementById('stopBtn');
+const popHint = document.querySelector('.popHint');
 
-const lines = [
-    "Initializing Kernel Exploit...",
-    "Bypassing Security Protocols...",
-    "Accessing Root System...",
-    "BREACH CONFIRMED!",
-    "Encrypting User Partitions...",
-    ""
+let countdownInterval, popupInterval, flashInterval, matrixInterval;
+
+/* ---------- UTILS ---------- */
+function formatTime(s){
+  const m = Math.floor(s/60).toString().padStart(2,'0');
+  const sec = (s%60).toString().padStart(2,'0');
+  return `${m}:${sec}`;
+}
+
+/* ---------- FAKE FILE LIST GENERATION ---------- */
+const fakeFiles = [
+  "Photos/IMG_2023_vacation.jpg",
+  "Docs/TaxReturn_2024.pdf",
+  "Projects/secret_project.ai",
+  "Wallets/backup_wallet.dat",
+  "Notes/passwords.txt",
+  "Videos/birthday.mp4",
+  "Work/report_final.xlsx",
+  "Archives/zip_important.zip",
+  "Design/logo_source.psd",
+  "Backup/system_image.img"
 ];
 
-let i = 0;
-let speed = 45;
-
-function playAudio() {
-    const h = document.getElementById("horror");
-    h.volume = 0.7;
-    h.play();
+function populateFiles(){
+  filebox.innerHTML = "";
+  for(let i=0;i<fakeFiles.length;i++){
+    const f = document.createElement('div');
+    f.className = 'file';
+    const left = document.createElement('div'); left.className='fleft'; left.textContent = fakeFiles[i];
+    const right = document.createElement('div'); right.className='fright'; right.textContent = 'ok';
+    f.appendChild(left); f.appendChild(right);
+    filebox.appendChild(f);
+  }
 }
 
-function glitchEffect() {
-    const g = document.getElementById("glitch");
-    const s = document.getElementById("glitchSound");
-
-    setInterval(() => {
-        g.style.opacity = Math.random() > 0.7 ? "0.8" : "0";
-        if (Math.random() > 0.75) s.play();
-    }, 120);
+/* ---------- MATRIX CANVAS ---------- */
+const canvas = document.getElementById('matrix');
+const ctx = canvas.getContext('2d');
+function fit(){ canvas.width = innerWidth; canvas.height = innerHeight; }
+fit(); window.addEventListener('resize', fit);
+const cols = Math.floor(window.innerWidth/10);
+let drops = Array(cols).fill(1);
+function drawMatrix(){
+  ctx.fillStyle = 'rgba(0,0,0,0.08)'; ctx.fillRect(0,0,canvas.width,canvas.height);
+  ctx.fillStyle = '#00ff88'; ctx.font = '14px monospace';
+  for(let i=0;i<drops.length;i++){
+    const ch = Math.random()>0.5 ? '1' : '0';
+    ctx.fillText(ch, i*10, drops[i]*14);
+    if(drops[i]*14 > canvas.height && Math.random()>0.975) drops[i]=0;
+    drops[i]++;
+  }
 }
 
-function flash() {
-    const f = document.getElementById("flash");
-    f.style.opacity = 1;
-    setTimeout(() => f.style.opacity = 0, 100);
+/* ---------- SPEECH (TTS) ---------- */
+const hasTTS = 'speechSynthesis' in window;
+function speakLine(txt, rate=0.95){
+  if(!hasTTS) return;
+  const u = new SpeechSynthesisUtterance(txt);
+  u.rate = rate; u.pitch = 0.8; u.volume = 1.0;
+  try{ speechSynthesis.speak(u); } catch(e){}
 }
 
-function typeWriter() {
-    let container = document.getElementById("text");
-    if (i < lines.length) {
-        container.innerHTML += lines[i] + "<br>";
+/* ---------- EFFECTS ---------- */
+function spawnPopup(){
+  const p = document.createElement('div');
+  p.className='pop';
+  p.style.top = (10 + Math.random()*70) + '%';
+  p.style.left = (10 + Math.random()*70) + '%';
+  p.style.padding = '8px 10px';
+  p.style.background = '#111';
+  p.style.border = '2px solid var(--red)';
+  p.style.color = '#ffbbbb';
+  p.style.zIndex = 10005;
+  p.textContent = '⚠ FILE ACCESS ERROR';
+  document.body.appendChild(p);
+  setTimeout(()=> p.remove(), 2400 + Math.random()*1800);
+}
 
-        document.getElementById("beep").play();
-        flash();
+function doFlash(){
+  flash.style.opacity = Math.random()*0.9;
+  setTimeout(()=> flash.style.opacity = 0, 120);
+}
 
-        i++;
-        setTimeout(typeWriter, speed);
-    } else {
-        startEncryption();
+function triggerJumpscare(){
+  try{ screamer.currentTime = 0; screamer.play(); } catch(e){}
+  scare.style.display = 'flex';
+  setTimeout(()=> scare.style.display = 'none', 1600);
+}
+
+function vibrate(pattern=[300,200,300]){
+  if(navigator.vibrate) navigator.vibrate(pattern);
+}
+
+/* ---------- MAIN SEQUENCE ---------- */
+function startAll(){
+  popHint.remove();
+  // matrix, ambience
+  matrixInterval = setInterval(drawMatrix, 40);
+  try{ amb.volume = 0.45; amb.play().catch(()=>{}); } catch(e){}
+  // populate file list & start countdown
+  populateFiles();
+  countEl.textContent = formatTime(remaining);
+
+  countdownInterval = setInterval(()=>{
+    remaining--;
+    countEl.textContent = formatTime(remaining);
+
+    // make some files "encrypted" visually
+    if(remaining % 18 === 0){
+      const idx = Math.floor(Math.random()*fakeFiles.length);
+      const item = filebox.children[idx];
+      if(item){
+        item.querySelector('.fright').textContent = 'ENCRYPTED';
+        item.querySelector('.fright').style.color = '#ff7a7a';
+      }
     }
+
+    // TTS cues
+    if(remaining === Math.floor(START_SECONDS*0.75)) speakLine('Warning. Unauthorized access detected.');
+    if(remaining === Math.floor(START_SECONDS*0.45)) speakLine('Encrypting user partitions now.');
+    if(remaining === 30) speakLine('Thirty seconds remaining.', 1.1);
+    if(remaining === JUMPSCARE_AT) { vibrate([400,200,400]); doFlash(); triggerJumpscare(); speakLine('Critical failure.', 1.05); }
+
+    if(remaining <= 0){
+      clearInterval(countdownInterval);
+      endSequence();
+    }
+  }, 1000);
+
+  popupInterval = setInterval(spawnPopup, POPUP_FREQ);
+  flashInterval = setInterval(()=>{ doFlash(); vibrate([200,100,200]); try{ alarm.play().catch(()=>{});}catch(e){} }, FLASH_FREQ);
 }
 
-function startEncryption() {
-    document.getElementById("warning-box").style.display = "block";
-    document.getElementById("progress").style.display = "block";
-
-    playAudio();
-    glitchEffect();
-
-    navigator.vibrate?.([300, 200, 300]); // GETAR HP
-
-    let percent = 0;
-    let interval = setInterval(() => {
-        percent += Math.floor(Math.random() * 13) + 5;
-
-        if (percent >= 100) {
-            percent = 100;
-            clearInterval(interval);
-            finish();
-        }
-
-        document.getElementById("percent").innerText = percent + "%";
-    }, 180);
+/* ---------- END SEQUENCE ---------- */
+function endSequence(){
+  // show overlay BSOD style
+  overlay.style.display = 'flex';
+  ransom.style.display = 'block';
+  // final TTS & vibration
+  speakLine('Encryption complete. Payment required.', 0.9);
+  vibrate([600,200,600,200,600]);
+  // stop ambience & effects gradually
+  clearInterval(popupInterval); clearInterval(flashInterval); clearInterval(matrixInterval);
+  try{ amb.pause(); } catch(e){}
 }
 
-function finish() {
-    document.getElementById("text").innerHTML += "<br>ENCRYPTION COMPLETE.<br>";
-    document.getElementById("decrypt-btn").style.display = "inline-block";
+/* ---------- STOP & RESET ---------- */
+function stopAll(){
+  // cancel TTS
+  try{ speechSynthesis.cancel(); } catch(e){}
+  clearInterval(popupInterval); clearInterval(flashInterval); clearInterval(matrixInterval); clearInterval(countdownInterval);
+  overlay.style.display = 'none'; ransom.style.display = 'none'; flash.style.opacity = 0; glitchLayer.style.opacity = 0;
+  scare.style.display = 'none';
+  // remove popups
+  document.querySelectorAll('.pop').forEach(n=>n.remove());
+  // reveal final message
+  const m = document.createElement('div');
+  m.className='pop';
+  m.style.top='50%'; m.style.left='50%'; m.style.transform='translate(-50%,-50%)';
+  m.style.background='#023'; m.style.border='2px solid #0f0'; m.style.color='#0f0';
+  m.style.padding='12px 16px';
+  m.textContent = '☠️.'MAMPUS LU ANJ GW HACK👨‍💻;
+  document.body.appendChild(m);
+  setTimeout(()=> m.remove(), 6000);
+  stopBtn.remove();
+  if(navigator.vibrate) navigator.vibrate(0);
 }
 
-document.getElementById("decrypt-btn").onclick = () => {
-    alert("☠️ SEMUA DATA LU GW AMBIL!!🚀🚀");
-};
+/* ---------- UI HOOKS ---------- */
+document.body.addEventListener('click', function initGesture(){
+  // start on first gesture so audio & fullscreen allowed
+  document.body.removeEventListener('click', initGesture);
+  // try request fullscreen
+  try{ document.documentElement.requestFullscreen().catch(()=>{}); } catch(e){}
+  // visual glitch-in
+  glitchLayer.style.opacity = 0.9;
+  setTimeout(()=> glitchLayer.style.opacity = 0.2, 1200);
+  // start main
+  startAll();
+}, {once:true});
 
-typeWriter();
+stopBtn.addEventListener('click', stopAll);
+
+document.getElementById('fakePay').addEventListener('click', ()=> {
+  ransom.style.display = 'block';
+  speakLine('Payment window opened.', 1.0);
+});
+
+document.getElementById('fakeDecrypt').addEventListener('click', ()=> {
+  // simulate a failed decrypt attempt, then a hint
+  speakLine('Attempting to decrypt - failure', 1.0);
+  // small flash & popup
+  doFlash(); spawnPopup();
+});
+
+/* safety console note */
+console.log('LEVEL 5 SIMULATION — harmless HTML only. No files affected.');
 </script>
-
 </body>
 </html>
