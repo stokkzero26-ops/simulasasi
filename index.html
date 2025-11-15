@@ -1,222 +1,282 @@
-<!DOCTYPE html>
-<html lang="en">
+<!doctype html>
+<html lang="id">
 <head>
-<meta charset="UTF-8">
-<title>System Override</title>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>BLACKOUT PROTOCOL — LEVEL 8 (SIMULASI)</title>
+<meta name="referrer" content="no-referrer">
 <style>
-    body {
-        margin: 0;
-        background: black;
-        overflow: hidden;
-        font-family: monospace;
-        color: #00ffea;
-    }
-
-    #glitchLayer {
-        position: fixed;
-        inset: 0;
-        background: repeating-linear-gradient(
-            rgba(0,255,255,0.04) 0,
-            rgba(0,255,255,0.04) 2px,
-            rgba(0,0,0,0.07) 2px,
-            rgba(0,0,0,0.07) 4px
-        );
-        mix-blend-mode: screen;
-        pointer-events: none;
-        animation: glitchMove 0.25s infinite linear alternate;
-    }
-
-    @keyframes glitchMove {
-        from { transform: translateY(0px); }
-        to { transform: translateY(-4px); }
-    }
-
-    /* BIOS SCREEN */
-    #bios {
-        position: fixed;
-        inset: 0;
-        background: black;
-        color: #0afff7;
-        padding: 25px;
-        font-size: 18px;
-        white-space: pre-line;
-        display: none;
-    }
-
-    /* TERMINAL */
-    #terminal {
-        position: fixed;
-        inset: 0;
-        background: #000;
-        padding: 15px;
-        font-size: 16px;
-        display: none;
-        color: #00fff2;
-        white-space: pre-line;
-    }
-
-    /* HUM EFFECT */
-    #hum {
-        position: fixed;
-        inset: 0;
-        background: rgba(0,255,255,0.05);
-        opacity: 0;
-        transition: 0.4s ease-in-out;
-        pointer-events: none;
-    }
-
-    /* PANIC SCREEN */
-    #panic {
-        position: fixed;
-        inset: 0;
-        background: #ff0000;
-        color: white;
-        font-size: 32px;
-        display: none;
-        justify-content: center;
-        align-items: center;
-        text-shadow: 0 0 10px white;
-    }
-
-    /* PIN OVERLAY */
-    #pinOverlay {
-        position: fixed;
-        inset: 0;
-        background: rgba(0,0,0,0.92);
-        backdrop-filter: blur(4px);
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        color: cyan;
-        font-size: 22px;
-        z-index: 9999;
-    }
-
-    #pinInput {
-        margin-top: 15px;
-        padding: 10px;
-        font-size: 20px;
-        text-align: center;
-        background: black;
-        color: cyan;
-        border: 2px solid cyan;
-        outline: none;
-        width: 160px;
-    }
-
-    #pinBtn {
-        margin-top: 15px;
-        padding: 10px 28px;
-        background: cyan;
-        color: black;
-        border: none;
-        font-size: 18px;
-        cursor: pointer;
-    }
+  :root{--bg:#000;--red:#ff0033;--amber:#ffb74d;--text:#dfffdc}
+  html,body{height:100%;margin:0;background:#000;color:var(--text);font-family: "Lucida Console", Monaco, monospace;overflow:hidden}
+  /* full black initial */
+  #stage{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;flex-direction:column;z-index:10}
+  #hint{position:fixed;bottom:18px;left:18px;color:#999;font-size:13px;z-index:50}
+  /* machine hum visual */
+  #humVis{position:fixed;inset:0;z-index:9;pointer-events:none;opacity:0}
+  /* BIOS box */
+  #bios{width:92%;max-width:1100px;background:#000;color:#9ff;border:1px solid rgba(0,255,136,0.06);padding:18px;border-radius:6px;box-shadow:0 0 60px rgba(0,255,136,0.03);display:none;z-index:30}
+  #bios pre{white-space:pre-wrap;font-size:14px;line-height:1.25}
+  /* terminal scan */
+  #term{position:fixed;left:5%;bottom:6%;width:55%;height:36vh;background:#020202;border:2px solid #004400;color:#0f0;padding:12px;overflow:auto;z-index:45;display:none}
+  /* kernel panic */
+  #panic{position:fixed;inset:0;background:linear-gradient(180deg,#100 0%, #000 60%);color:var(--red);display:none;align-items:center;justify-content:center;flex-direction:column;z-index:60}
+  #panic h1{font-size:48px;letter-spacing:2px;text-shadow:0 0 30px rgba(255,0,0,0.6)}
+  #leak{margin-top:18px;background:rgba(0,0,0,0.85);padding:12px;border-radius:8px;border:1px solid rgba(255,0,0,0.12);max-width:90%;max-height:34vh;overflow:auto;color:#ffdcdc}
+  /* emergency unlock */
+  #emergency{position:fixed;right:18px;bottom:18px;z-index:80;display:none}
+  #unlockBtn{padding:12px 14px;background:#0c8;border:none;border-radius:8px;cursor:pointer}
+  /* subtle glitch layer */
+  #glitch{position:fixed;inset:0;z-index:40;pointer-events:none;opacity:0; background-image:url('https://i.ibb.co/6gBPM7w/glitch.gif'); background-size:cover}
+  /* PIN modal (hidden at start) */
+  #pinModal{position:fixed;inset:0;background:rgba(0,0,0,0.9);display:none;align-items:center;justify-content:center;z-index:99999;flex-direction:column;color:#fff}
+  #pinModal .box{background:#081;border:2px solid rgba(0,255,136,0.15);padding:18px;border-radius:10px;text-align:center;color:#eaffea;max-width:480px}
+  #pinModal input{padding:10px;font-size:18px;background:#000;border:2px solid #0f0;color:#0f0;border-radius:6px;text-align:center;width:180px;margin-top:12px}
+  #pinModal button{margin-top:12px;padding:10px 16px;background:#0c8;border:none;border-radius:8px;cursor:pointer}
+  /* safe reveal */
+  .reveal{position:fixed;inset:0;display:none;align-items:center;justify-content:center;z-index:200000;background:rgba(0,0,0,0.92);color:#dff;flex-direction:column}
+  .reveal .card{background:#062;padding:20px;border-radius:12px}
+  .sr-only{position:absolute;left:-9999px}
 </style>
 </head>
-
 <body>
 
-<div id="glitchLayer"></div>
-
-<div id="pinOverlay">
-    ENTER PIN TO UNLOCK SYSTEM  
-    <input type="password" id="pinInput" maxlength="6">
-    <button id="pinBtn">UNLOCK</button>
+<div id="stage">
+  <div id="startBox">
+    <h2 style="color:var(--amber)">BLACKOUT PROTOCOL — READY</h2>
+    <p style="max-width:720px;text-align:center;color:#ccc">Tap / klik untuk mulai. (Perintah ini diperlukan agar audio & fullscreen berjalan di browser.)</p>
+    <button id="startBtn" style="padding:12px 20px;background:var(--red);border:none;color:#fff;border-radius:8px;cursor:pointer">MULAI PROTOKOL</button>
+  </div>
 </div>
 
-<div id="bios"></div>
-<div id="terminal"></div>
-<div id="panic">SYSTEM MALFUNCTION<br>CORE FAILURE</div>
-<div id="hum"></div>
+<div id="humVis" aria-hidden="true"></div>
+<div id="bios" role="region" aria-live="polite"><pre id="biosText"></pre></div>
+<div id="term" aria-live="polite"><pre id="termText">&gt; ready</pre></div>
+<div id="glitch"></div>
+
+<div id="panic" role="alert">
+  <h1>KERNEL PANIC — SYSTEM HALTED</h1>
+  <div id="leak"><strong>DATA LEAK (Simulasi Visual)</strong><div id="leakContent" style="margin-top:8px"></div></div>
+</div>
+
+<div id="emergency"><button id="unlockBtn">UNLOCK (EMERGENCY)</button></div>
+
+<!-- PIN modal -->
+<div id="pinModal" aria-hidden="true">
+  <div class="box">
+    <div style="font-size:20px">🔐 MASUKKAN PIN DARURAT</div>
+    <input id="pinInput" type="password" maxlength="6" placeholder="••••••" />
+    <div>
+      <button id="pinConfirm">KIRIM PIN</button>
+      <button id="pinCancel" style="margin-left:8px;background:#333;color:#fff;padding:10px 12px;border-radius:8px;border:none;cursor:pointer">BATAL</button>
+    </div>
+    <div style="margin-top:8px;font-size:12px;color:#ddd">Masukkan PIN untuk menghentikan simulasi.</div>
+  </div>
+</div>
+
+<!-- safe reveal -->
+<div id="safeReveal" class="reveal" role="dialog" aria-hidden="true">
+  <div class="card">
+    <h2>✔ SIMULASI DIHENTIKAN</h2>
+    <p>Tidak ada file yang rusak. Ini hanya simulasi visual untuk prank.</p>
+    <div style="margin-top:12px;text-align:center">
+      <button id="closeRevealBtn" style="padding:10px 14px;background:#0c8;border:none;border-radius:8px;cursor:pointer">Tutup</button>
+    </div>
+  </div>
+</div>
+
+<div id="hint">Gunakan hanya untuk prank. Tidak merusak file.</div>
+
+<!-- audio -->
+<audio id="hum" preload="auto" loop>
+  <source src="https://cdn.pixabay.com/audio/2022/08/02/audio_9e2f1a9b8b.mp3" type="audio/mp3">
+</audio>
+<audio id="biosBeep" preload="auto"><source src="https://assets.mixkit.co/sfx/preview/mixkit-system-startup-921.mp3" type="audio/mp3"></audio>
+<audio id="panicS" preload="auto"><source src="https://files.catbox.moe/2lfk6k.mp3" type="audio/mp3"></audio>
+<audio id="glitchS" preload="auto"><source src="https://assets.mixkit.co/sfx/preview/mixkit-arcade-retro-game-over-232.mp3" type="audio/mp3"></audio>
 
 <script>
-// ELEMENTS
-let glitchLayer = document.getElementById("glitchLayer");
-let bios = document.getElementById("bios");
-let term = document.getElementById("terminal");
-let panic = document.getElementById("panic");
-let hum = document.getElementById("hum");
+/* ===== CONFIG ===== */
+const PIN_CODE = '159753'; // PIN yang harus dimasukkan saat UNLOCK
+/* ================== */
 
-// PIN SYSTEM
-const CORRECT_PIN = "159753";  // bisa ganti bebas
+const startBtn = document.getElementById('startBtn');
+const hum = document.getElementById('hum');
+const bios = document.getElementById('bios');
+const biosText = document.getElementById('biosText');
+const term = document.getElementById('term');
+const termText = document.getElementById('termText');
+const panic = document.getElementById('panic');
+const leakContent = document.getElementById('leakContent');
+const panicS = document.getElementById('panicS');
+const biosBeep = document.getElementById('biosBeep');
+const glitchLayer = document.getElementById('glitch');
+const glitchS = document.getElementById('glitchS');
+const emergency = document.getElementById('emergency');
+const unlockBtn = document.getElementById('unlockBtn');
 
-document.getElementById("pinBtn").onclick = () => {
-    let input = document.getElementById("pinInput").value;
-    if (input === CORRECT_PIN) {
-        document.getElementById("pinOverlay").style.display = "none";
-        startSequence();
-    } else {
-        document.getElementById("pinInput").style.border = "2px solid red";
-        navigator.vibrate?.(200);
-    }
-};
+const pinModal = document.getElementById('pinModal');
+const pinInput = document.getElementById('pinInput');
+const pinConfirm = document.getElementById('pinConfirm');
+const pinCancel = document.getElementById('pinCancel');
 
-function typeEffect(el, text, speed=20) {
-    let i = 0;
-    let writer = setInterval(() => {
-        el.innerHTML += text.charAt(i);
-        i++;
-        if (i >= text.length) clearInterval(writer);
-    }, speed);
+const safeReveal = document.getElementById('safeReveal');
+const closeRevealBtn = document.getElementById('closeRevealBtn');
+
+let sequenceTimers = [];
+function q(ms){ return new Promise(res => { const t = setTimeout(res, ms); sequenceTimers.push(t); }); }
+function clearSequence(){ sequenceTimers.forEach(t=>clearTimeout(t)); sequenceTimers=[]; }
+function safeFullscreen(){ try{ document.documentElement.requestFullscreen?.(); }catch(e){} }
+function typeTo(el, text, speed=24){
+  return new Promise(res=>{
+    let i=0;
+    const t = setInterval(()=>{ el.textContent += text.charAt(i++) || ''; el.scrollTop = el.scrollHeight; if(i>text.length){ clearInterval(t); res(); } i++; }, speed);
+    sequenceTimers.push(t);
+  });
 }
 
-function startSequence() {
-    bios.style.display = "block";
+/* START SEQUENCE */
+startBtn.addEventListener('click', async ()=>{
+  document.getElementById('startBox').remove();
+  safeFullscreen();
+  hum.volume = 0.5; hum.play().catch(()=>{});
+  biosBeep.play().catch(()=>{});
+  document.body.style.transition = 'background 1s ease';
+  document.body.style.background = '#050505';
+  await q(700);
+  document.body.style.background = '#000';
 
-    let biosText =
-`
-BOOTING SYSTEM...
-CHECKING MEMORY BANKS..................OK
-CHECKING CPU REGISTERS.................OK
-CHECKING SECURITY CHANNEL..............OK
-ACCESS LEVEL: ROOT
-INITIALIZING DARKMODE KERNEL...........OK
-EXECUTING STARTUP ROUTINES...
-`;
+  // BIOS typing
+  bios.style.display = 'block';
+  biosText.textContent = '';
+  const lines = [
+    "PhoenixBIOS v3.14.7 initializing...",
+    "CPU: Secure Core Boot [OK]",
+    "Memory check: 8192MB [OK]",
+    "Disk controller: RAID-0 [OK]",
+    "S.M.A.R.T. Unknown sectors found... [!]",
+    "Attempting low-level repair...",
+    "Permission escalation: SUCCESS",
+    "Mounting user partitions...",
+    "Accessing /home/* user directories...",
+    ""
+  ];
+  for(const ln of lines){
+    await typeTo(biosText, ln + '\\n', 24);
+    if(Math.random()>0.6){ glitchLayer.style.opacity = 0.35; glitchS.currentTime=0; glitchS.play().catch(()=>{}); }
+    await q(350 + Math.random()*350);
+    glitchLayer.style.opacity = 0;
+  }
 
-    typeEffect(bios, biosText, 20);
+  // terminal scan
+  bios.style.display = 'none';
+  term.style.display = 'block';
+  termText.textContent = '';
+  const fakeFiles = [
+    "/home/user/Documents/Tax_2025.pdf",
+    "/home/user/Photos/family_birthday.jpg",
+    "/home/user/wallets/wallet_backup.dat",
+    "/home/user/Work/project_secret.ai",
+    "/home/user/Notes/passwords.txt",
+    "/mnt/usb/backup/system.img",
+    "/var/lib/mailbox/attachments.zip",
+    "/home/user/Videos/fun.mp4",
+    "/home/user/Archives/important.zip"
+  ];
+  for(let f of fakeFiles){
+    await typeTo(termText, `scanning ${f} ... `, 8);
+    const ok = Math.random() > 0.35;
+    await typeTo(termText, ok ? "OK\\n" : "ERROR (locked)\\n", 10);
+    termText.scrollTop = termText.scrollHeight;
+    if(Math.random() > 0.7){ glitchLayer.style.opacity = 0.3; glitchS.currentTime=0; glitchS.play().catch(()=>{}); }
+    await q(350 + Math.random()*500);
+    glitchLayer.style.opacity = 0;
+  }
 
-    setTimeout(() => {
-        bios.style.display = "none";
-        launchTerminal();
-    }, 5000);
-}
+  // kernel panic
+  await q(800);
+  term.style.display = 'none';
+  panic.style.display = 'flex';
+  panicS.currentTime = 0; panicS.play().catch(()=>{});
+  glitchLayer.style.opacity = 0.6;
 
-function launchTerminal() {
-    term.style.display = "block";
+  // leak info safe
+  const ua = navigator.userAgent || 'Unknown';
+  const locale = navigator.language || 'id-ID';
+  const now = new Date();
+  const leakHtml = `
+    <div><strong>Device Info (simulated):</strong></div>
+    <div>User Agent: ${escapeHtml(ua)}</div>
+    <div>Locale: ${escapeHtml(locale)}</div>
+    <div>Local time: ${escapeHtml(now.toString())}</div>
+    <div style="margin-top:10px"><strong>Leaked sample file list (visual):</strong></div>
+    <ul>
+      <li>Contacts_backup.csv</li>
+      <li>Photos/birthday_2024.jpg</li>
+      <li>notes_private.txt</li>
+    </ul>
+  `;
+  leakContent.innerHTML = leakHtml;
 
-    let t = "";
-    let lines = [
-        "root@system:~$ initializing modules...",
-        "loading shader.glx...",
-        "loading core.sys...",
-        "injecting visual distortion layer...",
-        "activating HUM resonance...",
-        "system status: STABLE",
-        "",
-        "root@system:~$ waiting for commands..."
-    ];
+  // show emergency button
+  await q(4000);
+  emergency.style.display = 'block';
+  setTimeout(()=>{ glitchLayer.style.opacity = 0.2; }, 2000);
+});
 
-    let i = 0;
+/* EMERGENCY -> show PIN modal */
+unlockBtn.addEventListener('click', ()=>{
+  pinModal.style.display = 'flex';
+  pinModal.setAttribute('aria-hidden','false');
+  pinInput.focus();
+});
 
-    let interval = setInterval(() => {
-        t += lines[i] + "\n";
-        term.innerHTML = t;
-        i++;
-        if (i >= lines.length) clearInterval(interval);
-    }, 500);
-}
+/* PIN modal handlers */
+pinCancel.addEventListener('click', ()=>{
+  pinModal.style.display = 'none';
+  pinModal.setAttribute('aria-hidden','true');
+  pinInput.value = '';
+});
 
-// Panic trigger (auto)
-setTimeout(() => {
-    panic.style.display = "flex";
-    hum.style.opacity = 1;
-}, 15000);
+pinConfirm.addEventListener('click', ()=>{
+  const val = (pinInput.value||'').trim();
+  if(val === PIN_CODE){
+    // correct: stop simulation
+    hum.pause(); biosBeep.pause(); panicS.pause(); glitchS.pause();
+    clearSequence();
+    panic.style.display = 'none';
+    term.style.display = 'none';
+    bios.style.display = 'none';
+    glitchLayer.style.opacity = 0;
+    emergency.style.display = 'none';
+    pinModal.style.display = 'none';
+    safeReveal.style.display = 'flex';
+    safeReveal.setAttribute('aria-hidden','false');
+  } else {
+    // wrong: glitch effect + alert
+    glitchLayer.style.opacity = 0.85;
+    glitchS.currentTime = 0; glitchS.play().catch(()=>{});
+    navigator.vibrate?.(200);
+    setTimeout(()=>{ glitchLayer.style.opacity = 0; }, 700);
+    alert('❌ PIN SALAH — AKSES DITOLAK');
+    pinInput.value = '';
+    pinInput.focus();
+  }
+});
 
+/* close safe reveal */
+closeRevealBtn.addEventListener('click', ()=>{
+  safeReveal.style.display = 'none';
+  location.reload();
+});
+
+/* helper */
+function escapeHtml(s){ return String(s).replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;'); }
+
+/* allow ESC to reveal emergency quickly */
+window.addEventListener('keydown', (e)=>{ if(e.key==='Escape'){ emergency.style.display='block'; } });
+
+/* fallback hint */
+setTimeout(()=>{ if(document.getElementById('startBox')){ document.getElementById('startBox').style.opacity=1; } }, 1000);
 </script>
-
 </body>
-</html>
+    </html>
