@@ -1,243 +1,183 @@
-<!DOCTYPE html>
-<html lang="en">
+<!doctype html>
+
+<html lang="id">
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>!!! SYSTEM COMPROMISED !!!</title>
+<title>FINAL BOSS — Ransomware Simulation (Visual Only)</title>
 <style>
-  :root { --red:#ff0033; --danger: #ffcc00; --bg:#000; }
-  html,body{height:100%;margin:0;background:#000;font-family:monospace;overflow:hidden}
-  #wrap{position:relative;width:100%;height:100%;color:var(--red);display:flex;flex-direction:column;align-items:center;justify-content:center;}
-  #big {-webkit-text-stroke:1px #000;font-size:clamp(24px,6vw,72px);letter-spacing:2px;text-align:center;}
-  #desc{font-size:18px;margin-top:12px;opacity:0.9;text-align:center}
-  #count{font-size:48px;margin-top:18px;color:var(--danger);text-shadow:0 0 20px var(--danger);}
-  #stopBtn{position:fixed;right:18px;bottom:18px;padding:14px 18px;background:var(--red);color:#fff;border:none;border-radius:8px;z-index:9999;cursor:pointer;box-shadow:0 0 30px var(--red)}
-  /* Blue Screen overlay */
-  #bsod{position:fixed;inset:0;background:#001a33;color:#fff;display:none;z-index:9998;align-items:center;justify-content:center;flex-direction:column;padding:30px;font-size:18px}
-  #bsod h1{font-size:40px;margin:0 0 10px}
-  /* flashing red */
-  #flash{position:fixed;inset:0;background:var(--red);opacity:0;pointer-events:none;z-index:9000}
-  /* shaking popups */
-  .pop{position:fixed;padding:10px 14px;background:#111;border:2px solid var(--red);color:var(--red);box-shadow:0 0 20px var(--red);font-size:16px;z-index:9900}
-  @keyframes shakeX{0%{transform:translateX(-6px)}25%{transform:translateX(6px)}50%{transform:translateX(-4px)}75%{transform:translateX(4px)}100%{transform:translateX(0)}}
-  .jitter{animation:shakeX .25s ease-in-out infinite}
-  /* jumpscare image */
-  #scare{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:#000;z-index:10000}
-  #scare img{max-width:90%;max-height:90%;transform:scale(1.05)}
-  /* matrix background */
-  #matrix{position:fixed;inset:0;pointer-events:none;opacity:0.25;z-index:5}
+:root{--red:#ff0033;--warn:#ffb74d;--bg:#000;--accent:#00ff88}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0;background:#000;color:var(--accent);font-family: "Lucida Console", Monaco, monospace;overflow:hidden}
+#matrix{position:fixed;inset:0;z-index:1;opacity:0.25;pointer-events:none}
+#glitch{position:fixed;inset:0;background:url('https://i.ibb.co/6gBPM7w/glitch.gif') center/cover;opacity:0;z-index:5;pointer-events:none}
+#flash{position:fixed;inset:0;background:var(--red);opacity:0;z-index:8;pointer-events:none}
+#stage{position:relative;z-index:10;display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;gap:12px;padding:20px;text-align:center}
+#title{font-size:clamp(20px,6vw,64px);text-shadow:0 0 30px rgba(255,0,0,0.6);color:var(--red)}
+#subtitle{font-size:16px;opacity:0.9}
+#timer{font-size:56px;color:var(--warn);text-shadow:0 0 20px rgba(255,180,77,0.6)}
+#files{width:90%;max-width:1000px;height:34vh;background:linear-gradient(0deg, rgba(0,0,0,0.5), rgba(6,6,6,0.6));border-radius:8px;padding:12px;overflow:auto;border:1px solid rgba(255,255,255,0.03);color:#d0ffd9;text-align:left}
+.file{display:flex;justify-content:space-between;padding:6px 8px;border-bottom:1px dashed rgba(255,255,255,0.03);align-items:center}
+.file .name{font-size:15px}
+.file .status{font-size:13px;color:#ffa8a8}
+.controls{display:flex;gap:10px;align-items:center}
+.btn{padding:10px 14px;border-radius:8px;border:none;cursor:pointer}
+.btn-danger{background:var(--red);color:#fff}
+.btn-ghost{background:#111;border:1px solid rgba(255,255,255,0.04);color:#fff}
+#ransomModal{position:fixed;right:6%;top:8%;width:380px;background:#0a0a0a;border:3px solid var(--red);padding:14px;z-index:10002;display:none;box-shadow:0 0 40px rgba(255,0,0,0.25)}
+#overlay{position:fixed;inset:0;background:rgba(0,0,0,0.98);z-index:10001;display:none;align-items:center;justify-content:center;flex-direction:column}
+#scare{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:#000;z-index:10003}
+#scare img{max-width:96%;max-height:96%;transform:scale(1.05)}
+#stop{position:fixed;left:18px;bottom:18px;padding:12px 16px;background:#0c8;border:none;border-radius:8px;color:#002;z-index:10004;cursor:pointer}
+.hint{position:fixed;bottom:18px;right:18px;background:#111;border:2px solid rgba(255,255,255,0.06);padding:8px 10px;border-radius:6px;color:#eee;z-index:10004}
+.terminal{position:fixed;left:6%;bottom:6%;width:420px;height:220px;background:#020202;border:2px solid #003300;color:#0f0;padding:12px;font-size:13px;overflow:auto;box-shadow:0 0 30px #00ff55;z-index:10002}
+.fake-progress{height:12px;background:#222;border-radius:6px;overflow:hidden;margin-top:8px}
+.fake-progress > i{display:block;height:100%;width:0%;background:linear-gradient(90deg,#ff6b6b,#ffb86b);transition:width 0.5s}
 </style>
 </head>
 <body>
-  <div id="flash"></div>
-  <canvas id="matrix"></canvas>
-
-  <div id="wrap" tabindex="0">
-    <div id="big">!!! SYSTEM BREACH !!!</div>
-    <div id="desc">All user partitions locked. Recovery key required.</div>
-    <div id="count">00:02:00</div>
+<canvas id="matrix"></canvas>
+<div id="glitch"></div>
+<div id="flash"></div>
+<div id="stage" tabindex="0">
+  <div id="title">!!! FINAL BOSS — SYSTEM LOCKED !!!</div>
+  <div id="subtitle">Semua partisi terenkripsi. Kunci pemulihan diperlukan.</div>
+  <div id="timer">10:00</div>
+  <div id="files" aria-hidden="true"></div>
+  <div class="controls">
+    <button class="btn btn-danger" id="btnPay">INSTRUKSI PEMBAYARAN</button>
+    <button class="btn btn-ghost" id="btnAttempt">COBA DECRYPT</button>
+    <div class="badge" style="color:#0f0">Sim: FINAL-BOSS</div>
   </div>
-
-  <div id="bsod">
-    <h1>:(</h1>
-    <div>YOUR DEVICE HAS EXPERIENCED A CRITICAL ERROR</div>
-    <div style="margin-top:12px;font-size:14px;opacity:0.9">
-      The system files are encrypted. Do not power off. Contact attacker for key.
-    </div>
+</div><div id="ransomModal">
+  <h3 style="color:var(--red);margin:0 0 8px 0">INSTRUKSI PEMBAYARAN</h3>
+  <p style="font-size:13px;color:#fff;opacity:0.95;margin:0 0 8px 0">Pembayaran via WhatsApp Admin (visual only). Hubungi admin untuk instruksi.</p>
+  <div style="display:flex;gap:8px;align-items:center">
+    <input id="waNumber" value="+6281574684348" readonly style="flex:1;padding:8px;background:#111;border:1px solid rgba(255,255,255,0.04);color:#fff;border-radius:6px" />
+    <button id="waOpen" class="btn btn-ghost">Hubungi</button>
   </div>
-
-  <div id="scare"><img src="https://i.ibb.co/3s5rD7p/screamer.png" alt="scare"/></div>
-
-  <button id="stopBtn">REAL PRANK — STOP</button>
+  <div style="margin-top:10px">Unggah bukti (simulasi):</div>
+  <input type="file" id="fakeUpload" style="width:100%;margin-top:8px;background:#000;color:#0f0" />
+  <button id="fakeSubmit" class="btn btn-danger" style="width:100%;margin-top:10px">Kirim Bukti (Simulasi)</button>
+  <div class="fake-progress" aria-hidden="true"><i id="prog"></i></div>
+</div><div id="overlay"><h1 style="color:var(--red);font-size:40px;margin:0">ACCESS DENIED</h1><p style="color:#fff;opacity:0.9;margin-top:12px">Sistem rusak. Menunggu instruksi.</p></div>
+<div id="scare"><img src="https://i.ibb.co/3s5rD7p/screamer.png" alt="scare"/></div>
+<div class="terminal" id="terminal">&gt; ready</div>
+<button id="stop">PRANK STOP</button>
+<div class="hint">Tap layar untuk MEMULAI (required)</div><!-- Audio layers --><audio id="amb" loop preload="auto"><source src="https://cdn.pixabay.com/audio/2022/03/15/audio_ef7b8e135b.mp3" type="audio/mp3"></audio> <audio id="alarm" preload="auto"><source src="https://assets.mixkit.co/sfx/preview/mixkit-bell-alert-610.mp3" type="audio/mp3"></audio> <audio id="scream" preload="auto"><source src="https://files.catbox.moe/2lfk6k.mp3" type="audio/mp3"></audio>
 
 <script>
-/* ========== CONFIG ========== */
-const COUNTDOWN_SECONDS = 120; // 2 minutes
-const VIBRATE_PATTERN = [400,200,400,200,400,200]; // intense
-const POPUP_FREQ_MS = 700; // popup spawn
-const FLASH_FREQ_MS = 600; // red flash
-const JUMPSCARE_AT = 8; // seconds left to trigger jumpscare
-/* ============================ */
+/* FINAL BOSS — harmless visual simulation
+   - 10 menit countdown (600s)
+   - WhatsApp button (opens wa.me link)
+   - fake decrypt progress
+   - auto-vibrate and jumpscare near end
+   - STOP button resets everything
+*/
 
-let remaining = COUNTDOWN_SECONDS;
-const countEl = document.getElementById('count');
-const bsod = document.getElementById('bsod');
+const START_SEC = 600; // 10 minutes
+let timeLeft = START_SEC;
+const timerEl = document.getElementById('timer');
+const filesEl = document.getElementById('files');
+const terminal = document.getElementById('terminal');
+const ransomModal = document.getElementById('ransomModal');
+const waOpen = document.getElementById('waOpen');
+const waNumber = document.getElementById('waNumber');
+const fakeSubmit = document.getElementById('fakeSubmit');
+const prog = document.getElementById('prog');
+const amb = document.getElementById('amb');
+const alarm = document.getElementById('alarm');
+const scream = document.getElementById('scream');
 const flash = document.getElementById('flash');
-const stopBtn = document.getElementById('stopBtn');
+const glitch = document.getElementById('glitch');
 const scare = document.getElementById('scare');
-let popupInterval, flashInterval, matrixInterval, countdownInterval, popupCount=0;
-let ttsEnabled = 'speechSynthesis' in window;
+const stopBtn = document.getElementById('stop');
+const hint = document.querySelector('.hint');
+const matrix = document.getElementById('matrix');
 
-function formatTime(s){
-  const m = Math.floor(s/60).toString().padStart(2,'0');
-  const sec = (s%60).toString().padStart(2,'0');
-  return `${m}:${sec}`;
+let countdownI, popupI, flashI, matrixI, termI, progI;
+let started = false;
+
+/* fake file list */
+const FAKE_FILES = [
+  'Photos/IMG_2025_vacation.jpg','Docs/Invoice_2025.pdf','Work/presentation_final.pptx','Wallets/backup_wallet.dat',
+  'Notes/passwords.txt','Videos/family.mp4','Projects/secret.ai','Design/logo_source.psd','Backup/system.img','Archives/important.zip'
+];
+function renderFiles(){
+  filesEl.innerHTML = '';
+  FAKE_FILES.forEach((f,i)=>{
+    const el = document.createElement('div'); el.className='file';
+    const n = document.createElement('div'); n.className='name'; n.textContent = f;
+    const s = document.createElement('div'); s.className='status'; s.textContent = 'OK';
+    el.appendChild(n); el.appendChild(s); filesEl.appendChild(el);
+  });
 }
+renderFiles();
 
-/* MATRIX CANVAS */
-const canvas = document.getElementById('matrix');
-const ctx = canvas.getContext('2d');
-function fitCanvas(){ canvas.width = innerWidth; canvas.height = innerHeight; }
-fitCanvas(); window.addEventListener('resize', fitCanvas);
+/* matrix canvas */
+function fit(){ matrix.width = innerWidth; matrix.height = innerHeight; }
+fit(); window.addEventListener('resize', fit);
+const ctx = matrix.getContext('2d');
 const cols = Math.floor(window.innerWidth/10);
 let drops = Array(cols).fill(1);
-function drawMatrix(){
-  ctx.fillStyle = 'rgba(0,0,0,0.08)'; ctx.fillRect(0,0,canvas.width,canvas.height);
-  ctx.fillStyle = '#00ff00'; ctx.font = '14px monospace';
-  for(let i=0;i<drops.length;i++){
-    const text = Math.random()>0.5 ? '1' : '0';
-    ctx.fillText(text, i*10, drops[i]*14);
-    if(drops[i]*14 > canvas.height && Math.random()>0.975) drops[i]=0;
-    drops[i]++;
-  }
+function drawMatrix(){ ctx.fillStyle='rgba(0,0,0,0.08)'; ctx.fillRect(0,0,matrix.width,matrix.height); ctx.fillStyle='#00ff88'; ctx.font='14px monospace'; for(let i=0;i<drops.length;i++){ const ch = Math.random()>0.5?'1':'0'; ctx.fillText(ch,i*10,drops[i]*14); if(drops[i]*14 > matrix.height && Math.random()>0.975) drops[i]=0; drops[i]++; } }
+
+/* terminal simulator */
+const TERMINAL_LINES = ['root@system:~# exploit_kernel --init','root@system:~# mount -o remount,rw /','root@system:~# encrypt --target /home/user --alg AES-4096','root@system:~# wipe_shadow_copies','root@system:~# send_status --backchannel ok'];
+let tIdx=0;
+function startTerminal(){ termI = setInterval(()=>{ if(tIdx < TERMINAL_LINES.length){ terminal.textContent += '
+'+TERMINAL_LINES[tIdx]; terminal.scrollTop = terminal.scrollHeight; tIdx++; } else clearInterval(termI); },900); }
+
+/* speech */
+function speak(txt,rate=0.95,pitch=0.7){ if(!('speechSynthesis' in window)) return; const u=new SpeechSynthesisUtterance(txt); u.rate=rate; u.pitch=pitch; try{ speechSynthesis.speak(u);}catch(e){} }
+
+/* effects */
+function doFlash(){ flash.style.opacity = Math.random()*0.9; setTimeout(()=> flash.style.opacity=0,120); }
+function glitchPulse(){ glitch.style.opacity = 0.9; setTimeout(()=> glitch.style.opacity = Math.random()*0.12, 400); }
+function spawnPopup(){ const p=document.createElement('div'); p.className='pop'; p.textContent='⚠ CRITICAL WRITE ERROR'; p.style.position='fixed'; p.style.top=(10+Math.random()*70)+'%'; p.style.left=(10+Math.random()*70)+'%'; p.style.padding='8px 12px'; p.style.background='#111'; p.style.border='2px solid var(--red)'; p.style.color='#ffdddd'; p.style.zIndex=10005; document.body.appendChild(p); setTimeout(()=>p.remove(),2500+Math.random()*2000); }
+function vibrateNow(pat=[300,200,300]){ if(navigator.vibrate) navigator.vibrate(pat); }
+function triggerJumpscare(){ try{ scream.currentTime=0; scream.play().catch(()=>{});}catch(e){}; scare.style.display='flex'; setTimeout(()=> scare.style.display='none',1600); }
+
+/* progress bar simulation */
+function startFakeProgress(){ let w=0; prog.style.width='0%'; progI = setInterval(()=>{ w += Math.random()*12 + 6; if(w>=100){ w=100; clearInterval(progI); prog.style.width='100%'; } else prog.style.width = w+'%'; }, 700); }
+
+/* core sequence */
+function startAll(){ if(started) return; started=true; hint.remove(); // try fullscreen
+ try{ document.documentElement.requestFullscreen().catch(()=>{}); }catch(e){}
+ // start ambience
+ amb.volume = 0.45; amb.play().catch(()=>{});
+ // matrix + terminal
+ matrixI = setInterval(drawMatrix,40); startTerminal();
+ // spawn effects
+ popupI = setInterval(spawnPopup,700); flashI = setInterval(()=>{ doFlash(); glitchPulse(); alarm.play().catch(()=>{}); vibrateNow([200,100,200]); },520);
+ // countdown
+ timerEl.textContent = formatTime(timeLeft);
+ countdownI = setInterval(()=>{ timeLeft--; timerEl.textContent = formatTime(timeLeft);
+ // mark files encrypted over time
+ if(timeLeft % 20 === 0){ const idx = Math.floor(Math.random()*FAKE_FILES.length); const el = filesEl.children[idx]; if(el) el.querySelector('.status').textContent = 'ENCRYPTED'; }
+ // TTS cues
+ if(timeLeft === 480) speak('Peringatan. Akses tidak sah terdeteksi.');
+ if(timeLeft === 300) speak('Sedang mengenkripsi partisi pengguna.');
+ if(timeLeft === 60) speak('Satu menit tersisa.');
+ if(timeLeft === 10){ vibrateNow([400,200,400]); doFlash(); triggerJumpscare(); speak('Kegagalan kritis.',1.05,0.6); }
+ if(timeLeft <= 0){ clearInterval(countdownI); endSequence(); }
+ },1000);
 }
 
-/* play TTS threat lines (non-violent) */
-function speakLines(lines, rate=0.95){
-  if(!ttsEnabled) return;
-  for(let i=0;i<lines.length;i++){
-    const u = new SpeechSynthesisUtterance(lines[i]);
-    u.rate = rate;
-    u.pitch = 0.7;
-    u.volume = 1.0;
-    setTimeout(()=> speechSynthesis.speak(u), i*1200);
-  }
-}
+function endSequence(){ clearInterval(popupI); clearInterval(flashI); clearInterval(matrixI); ransomModal.style.display='block'; overlay.style.display='flex'; speak('Enkripsi selesai. Menunggu instruksi pembayaran.'); vibrateNow([600,200,600,200,600]); }
 
-/* popup spam */
-function spawnPopup(){
-  const p = document.createElement('div');
-  p.className = 'pop jitter';
-  p.textContent = `⚠ SYSTEM FAILURE (${++popupCount})`;
-  p.style.top = (10 + Math.random()*70) + '%';
-  p.style.left = (10 + Math.random()*70) + '%';
-  document.body.appendChild(p);
-  setTimeout(()=>{ p.remove(); }, 2500 + Math.random()*2000);
-}
+function stopAll(){ try{ speechSynthesis.cancel(); }catch(e){} clearInterval(countdownI); clearInterval(popupI); clearInterval(flashI); clearInterval(matrixI); clearInterval(termI); amb.pause(); alarm.pause(); scream.pause(); overlay.style.display='none'; ransomModal.style.display='none'; flash.style.opacity=0; glitch.style.opacity=0; scare.style.display='none'; document.querySelectorAll('.pop').forEach(n=>n.remove()); stopBtn.remove(); const m=document.createElement('div'); m.className='pop'; m.style.position='fixed'; m.style.top='50%'; m.style.left='50%'; m.style.transform='translate(-50%,-50%)'; m.style.background='#023'; m.style.border='2px solid #0f0'; m.style.color='#0f0'; m.style.padding='12px 16px'; m.textContent='PRANK STOPPED — INI HANYA SIMULASI.'; document.body.appendChild(m); setTimeout(()=>m.remove(),6000); if(navigator.vibrate) navigator.vibrate(0); }
 
-/* red flash */
-function doFlash(){
-  flash.style.opacity = Math.random()*0.85;
-  setTimeout(()=> flash.style.opacity = 0, 120);
-}
+function formatTime(s){ const m=Math.floor(s/60).toString().padStart(2,'0'); const sec=(s%60).toString().padStart(2,'0'); return `${m}:${sec}`; }
 
-/* vibrate loop (if supported) */
-function vibrateNow(){
-  if(navigator.vibrate) navigator.vibrate(VIBRATE_PATTERN);
-}
-
-/* jumpscare */
-function triggerJumpscare(){
-  scare.style.display = 'flex';
-  // big screamer sound
-  const a = new Audio('https://files.catbox.moe/2lfk6k.mp3'); // short screamer
-  a.volume = 1.0; a.play().catch(()=>{});
-  setTimeout(()=> scare.style.display='none', 1600);
-}
-
-/* fake BSOD pop */
-function showBSOD(){
-  bsod.style.display = 'flex';
-}
-
-/* make fullscreen request after a user action prompt (browsers restrict autoplay/fullscreen) */
-function promptStart(){
-  const prompt = document.createElement('div');
-  prompt.className='pop';
-  prompt.style.top='40%'; prompt.style.left='50%'; prompt.style.transform='translate(-50%,-50%)';
-  prompt.style.fontSize='18px';
-  prompt.innerHTML = '<b>Tap to START</b><br>Press to begin system simulation';
-  document.body.appendChild(prompt);
-  const start = ()=> {
-    document.body.removeChild(prompt);
-    // request fullscreen (needs gesture)
-    if(document.documentElement.requestFullscreen) document.documentElement.requestFullscreen().catch(()=>{});
-    // play ambient sound if allowed
-    try { document.getElementById('wrap').focus(); } catch(e){}
-    startSequence();
-  };
-  prompt.addEventListener('click', start);
-}
-
-/* main sequence */
-function startSequence(){
-  // start matrix
-  matrixInterval = setInterval(drawMatrix, 50);
-  // start countdown
-  countdownInterval = setInterval(()=> {
-    remaining--;
-    countEl.textContent = formatTime(remaining);
-    // tts warning at specific times
-    if(remaining === Math.floor(COUNTDOWN_SECONDS * 0.75)) speakLines(['Warning. Unauthorized access detected.']);
-    if(remaining === Math.floor(COUNTDOWN_SECONDS * 0.45)) speakLines(['Encrypting user partitions now.']);
-    if(remaining === JUMPSCARE_AT) { triggerJumpscare(); vibrateNow(); }
-    if(remaining <= 10 && remaining > 0) { speakLines([`${remaining} seconds remaining`],1.3); vibrateNow(); }
-    if(remaining <= 0){
-      clearInterval(countdownInterval);
-      endSequence();
-    }
-  }, 1000);
-  // popup spam
-  popupInterval = setInterval(spawnPopup, POPUP_FREQ_MS);
-  // flash
-  flashInterval = setInterval(()=>{ doFlash(); vibrateNow(); }, FLASH_FREQ_MS);
-  // start ambient TTS + vibration loop
-  setTimeout(()=> { speakLines(['All files encrypted. You have been locked out.']); }, 600);
-}
-
-/* end / reveal prank */
-function endSequence(){
-  // dramatic finish: show BSOD
-  clearInterval(popupInterval); clearInterval(flashInterval); clearInterval(matrixInterval);
-  showBSOD();
-  // final speech
-  speakLines(['Encryption complete. Awaiting payment instructions.'], 0.9);
-  // after short time show STOP button bigger
-  stopBtn.style.background = '#00cc44';
-  stopBtn.textContent = 'PRANK OVER — CLICK TO STOP';
-}
-
-/* STOP handler: immediately reset everything (safe) */
-function stopAll(){
-  try{ speechSynthesis.cancel(); }catch(e){}
-  clearInterval(popupInterval); clearInterval(flashInterval); clearInterval(matrixInterval); clearInterval(countdownInterval);
-  bsod.style.display = 'none'; flash.style.opacity = 0; scare.style.display='none';
-  // remove remaining popups
-  document.querySelectorAll('.pop').forEach(n=>n.remove());
-  countEl.textContent = 'PRANK STOPPED';
-  stopBtn.remove();
-  // optional gentle message
-  const msg = document.createElement('div');
-  msg.className='pop';
-  msg.style.top='50%'; msg.style.left='50%'; msg.style.transform='translate(-50%,-50%)';
-  msg.style.background='#022'; msg.style.border='2px solid #0f0'; msg.style.color='#0f0';
-  msg.textContent = '😂 Ini Cuma Prank. Tidak ada file yang diubah.';
-  document.body.appendChild(msg);
-  setTimeout(()=> msg.remove(), 6000);
-  // stop vibration
-  if(navigator.vibrate) navigator.vibrate(0);
-}
-
-/* attach stop */
+/* UI hooks */
+document.body.addEventListener('click', function init(){ document.body.removeEventListener('click', init); startAll(); }, {once:true});
 stopBtn.addEventListener('click', stopAll);
+btnPay.addEventListener('click', ()=>{ ransomModal.style.display='block'; speak('Jendela instruksi dibuka'); });
+btnAttempt.addEventListener('click', ()=>{ speak('Mencoba dekripsi...'); doFlash(); spawnPopup(); setTimeout(()=>alert('DEKRIPSI GAGAL. KUNCI TIDAK DITEMUKAN.'),900); });
+waOpen.addEventListener('click', ()=>{ const num = waNumber.value.replace(/[^0-9+]/g,''); const link = `https://wa.me/${num.replace(/^\+/, '')}`; window.open(link,'_blank'); });
+fakeSubmit.addEventListener('click', ()=>{ startFakeProgress(); speak('Bukti terkirim. Menunggu verifikasi.'); setTimeout(()=>{ alert('Simulasi: bukti terkirim. Admin akan memverifikasi.'); },2000); });
 
-/* initial prompt so user triggers gesture (autoplay/fullscreen) */
-promptStart();
-
-/* safety note in console */
-console.log('SIMULATION MODE: harmless HTML only. No file access.');
-
-/* auto fallback: if user doesn't click within 12s, show a clear instruction */
-setTimeout(()=>{
-  if(!countEl.textContent || countEl.textContent === formatTime(COUNTDOWN_SECONDS)){
-    const hint = document.createElement('div');
-    hint.className='pop';
-    hint.style.top='85%'; hint.style.left='50%'; hint.style.transform='translateX(-50%)';
-    hint.textContent = 'Tap the screen to START the simulation (required by browser).';
-    document.body.appendChild(hint);
-    setTimeout(()=> hint.remove(), 9000);
-  }
-},12000);
-</script>
-</body>
+console.log('FINAL BOSS simulation loaded — harmless visual only.');
+</script></body>
 </html>
