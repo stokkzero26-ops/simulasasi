@@ -1,113 +1,222 @@
-<!doctype html>
-
-<html lang="id">
+<!DOCTYPE html>
+<html lang="en">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>OMEGA PROTOCOL — Ransomware Simulation (LEVEL 7)</title>
+<meta charset="UTF-8">
+<title>System Override</title>
 <style>
-:root{--r:#ff0033;--y:#ffd36b;--g:#00ff99;--a:#00eaff;--bg:#000}
-*{margin:0;padding:0;box-sizing:border-box;font-family:"Lucida Console",monospace}
-html,body{height:100%;background:#000;color:#0f0;overflow:hidden}
-#noise{position:fixed;inset:0;background:url('https://i.ibb.co/Fm1P1qX/noise.gif') center/cover;opacity:0.12;z-index:9990;pointer-events:none}
-#scan{position:fixed;left:0;top:0;width:100%;height:3px;background:#0f0;filter:blur(2px);opacity:0;z-index:9992}
-#warning{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;flex-direction:column;z-index:10;color:#f00;text-shadow:0 0 20px #f00;opacity:0;transition:0.3s}
-#core{position:relative;z-index:5;top:10%;width:100%;text-align:center;color:#aef}
-#core h1{font-size:clamp(28px,6vw,80px);text-shadow:0 0 25px #00eaff}
-#core p{font-size:14px;margin-top:6px;color:#8cf}
-#clock{font-size:60px;margin-top:18px;color:var(--y);text-shadow:0 0 22px var(--y)}
-#files{width:92%;height:35vh;margin:20px auto;background:rgba(0,0,0,0.5);border:1px solid #033;padding:10px;border-radius:8px;overflow:auto;color:#cff}
-.file{display:flex;justify-content:space-between;padding:6px 8px;border-bottom:1px solid #033}
-.controls{margin-top:14px;display:flex;gap:10px;justify-content:center}
-.btn{padding:10px 14px;border-radius:8px;border:none;cursor:pointer;color:#fff}
-.btn-danger{background:var(--r)}
-.btn-ghost{background:#111;border:1px solid #333}
-#modal{position:fixed;top:10%;right:4%;width:380px;background:#050505;border:3px solid var(--r);z-index:20000;padding:16px;display:none}
-#overlay{position:fixed;inset:0;background:rgba(0,0,0,0.97);z-index:15000;display:none;align-items:center;justify-content:center;color:#f00;text-shadow:0 0 20px #f00}
-#scare{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:#000;z-index:30000}
-#scare img{max-width:98%;max-height:98%}
-#stop{position:fixed;bottom:16px;left:16px;padding:10px 14px;background:#0c8;color:#000;border-radius:8px;cursor:pointer;z-index:50000}
-.hint{position:fixed;bottom:20px;right:20px;background:#111;color:#fff;border:1px solid #333;padding:8px 10px;border-radius:6px;z-index:50000}
-.pin-box{position:fixed;inset:0;display:none;flex-direction:column;align-items:center;justify-content:center;z-index:60000;background:rgba(0,0,0,0.95);color:#fff;font-size:18px}
-.pin-box input{padding:10px;font-size:20px;border:none;border-radius:6px;margin:10px 0;background:#111;color:#0f0;text-align:center;letter-spacing:4px}
-.pin-box button{padding:10px 18px;background:#0f0;color:#000;border:none;border-radius:6px;font-weight:bold;cursor:pointer}
+    body {
+        margin: 0;
+        background: black;
+        overflow: hidden;
+        font-family: monospace;
+        color: #00ffea;
+    }
+
+    #glitchLayer {
+        position: fixed;
+        inset: 0;
+        background: repeating-linear-gradient(
+            rgba(0,255,255,0.04) 0,
+            rgba(0,255,255,0.04) 2px,
+            rgba(0,0,0,0.07) 2px,
+            rgba(0,0,0,0.07) 4px
+        );
+        mix-blend-mode: screen;
+        pointer-events: none;
+        animation: glitchMove 0.25s infinite linear alternate;
+    }
+
+    @keyframes glitchMove {
+        from { transform: translateY(0px); }
+        to { transform: translateY(-4px); }
+    }
+
+    /* BIOS SCREEN */
+    #bios {
+        position: fixed;
+        inset: 0;
+        background: black;
+        color: #0afff7;
+        padding: 25px;
+        font-size: 18px;
+        white-space: pre-line;
+        display: none;
+    }
+
+    /* TERMINAL */
+    #terminal {
+        position: fixed;
+        inset: 0;
+        background: #000;
+        padding: 15px;
+        font-size: 16px;
+        display: none;
+        color: #00fff2;
+        white-space: pre-line;
+    }
+
+    /* HUM EFFECT */
+    #hum {
+        position: fixed;
+        inset: 0;
+        background: rgba(0,255,255,0.05);
+        opacity: 0;
+        transition: 0.4s ease-in-out;
+        pointer-events: none;
+    }
+
+    /* PANIC SCREEN */
+    #panic {
+        position: fixed;
+        inset: 0;
+        background: #ff0000;
+        color: white;
+        font-size: 32px;
+        display: none;
+        justify-content: center;
+        align-items: center;
+        text-shadow: 0 0 10px white;
+    }
+
+    /* PIN OVERLAY */
+    #pinOverlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(0,0,0,0.92);
+        backdrop-filter: blur(4px);
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        color: cyan;
+        font-size: 22px;
+        z-index: 9999;
+    }
+
+    #pinInput {
+        margin-top: 15px;
+        padding: 10px;
+        font-size: 20px;
+        text-align: center;
+        background: black;
+        color: cyan;
+        border: 2px solid cyan;
+        outline: none;
+        width: 160px;
+    }
+
+    #pinBtn {
+        margin-top: 15px;
+        padding: 10px 28px;
+        background: cyan;
+        color: black;
+        border: none;
+        font-size: 18px;
+        cursor: pointer;
+    }
 </style>
 </head>
+
 <body>
-<div id="noise"></div>
-<div id="scan"></div>
-<div id="warning"><h1>SYSTEM BREACH — OMEGA PROTOCOL</h1><p>FINAL ENCRYPTION STAGE</p></div><div id="core">
-  <h1>OMEGA PROTOCOL INITIATED</h1>
-  <p>Seluruh sektor terkunci — fase Omega aktif.</p>
-  <div id="clock">05:00</div>
-  <div id="files"></div>
-  <div class="controls">
-    <button class="btn btn-danger" id="payBtn">INSTRUKSI PEMBAYARAN</button>
-    <button class="btn btn-ghost" id="decBtn">COBA DECRYPT</button>
-  </div>
-</div><div id="modal">
-  <h3 style="color:var(--r);margin:0 0 10px 0">BAYAR VIA WHATSAPP</h3>
-  <p style="color:#eee;font-size:13px;margin-bottom:8px">Hubungi admin untuk instruksi lanjutan.</p>
-  <input value="+6281574684348" id="waNum" readonly style="width:100%;padding:8px;background:#111;color:#fff;border:1px solid #333;margin-bottom:8px" />
-  <button id="openWa" class="btn btn-ghost" style="width:100%">Hubungi</button>
-</div><div id="overlay"><h1>ACCESS FINAL-LOCKED</h1></div>
-<div id="scare"><img src="https://i.ibb.co/3s5rD7p/screamer.png" /></div>
-<div id="pin-container" class="pin-box"><p>Enter PIN to stop simulation:</p><input type="password" id="pin-input" maxlength="6" placeholder="••••••"><button id="pin-submit">UNLOCK</button></div>
-<div class="hint">Tap layar untuk MEMULAI</div><audio id="amb" loop preload="auto"><source src="https://cdn.pixabay.com/audio/2022/03/15/audio_ef7b8e135b.mp3"></audio> <audio id="alert" preload="auto"><source src="https://assets.mixkit.co/sfx/preview/mixkit-bell-alert-610.mp3"></audio> <audio id="sc" preload="auto"><source src="https://files.catbox.moe/2lfk6k.mp3"></source></audio>
+
+<div id="glitchLayer"></div>
+
+<div id="pinOverlay">
+    ENTER PIN TO UNLOCK SYSTEM  
+    <input type="password" id="pinInput" maxlength="6">
+    <button id="pinBtn">UNLOCK</button>
+</div>
+
+<div id="bios"></div>
+<div id="terminal"></div>
+<div id="panic">SYSTEM MALFUNCTION<br>CORE FAILURE</div>
+<div id="hum"></div>
 
 <script>
-const filesBox=document.getElementById('files');
-const clock=document.getElementById('clock');
-const modal=document.getElementById('modal');
-const overlay=document.getElementById('overlay');
-const scare=document.getElementById('scare');
-const hint=document.querySelector('.hint');
-const scan=document.getElementById('scan');
-const warning=document.getElementById('warning');
-const amb=document.getElementById('amb');
-const alertS=document.getElementById('alert');
-const sc=document.getElementById('sc');
-let started=false;
-let time=300;
-let countI,scanI;
+// ELEMENTS
+let glitchLayer = document.getElementById("glitchLayer");
+let bios = document.getElementById("bios");
+let term = document.getElementById("terminal");
+let panic = document.getElementById("panic");
+let hum = document.getElementById("hum");
 
-const fake=["root/system32.dll","data/private.bin","wallet/seed.dat","photos/family_2024.jpg","notes/passwords.txt","archive/backup.zip","config/system.lock","media/video.mp4","documents/ID.pdf"];
-function render(){filesBox.innerHTML=''; fake.forEach(f=>{filesBox.innerHTML+=`<div class="file"><span>${f}</span><span style="color:#f88">LOCKED</span></div>`});}
-render();
+// PIN SYSTEM
+const CORRECT_PIN = "159753";  // bisa ganti bebas
 
-function format(s){const m=String(Math.floor(s/60)).padStart(2,'0');const x=String(s%60).padStart(2,'0');return `${m}:${x}`;}
+document.getElementById("pinBtn").onclick = () => {
+    let input = document.getElementById("pinInput").value;
+    if (input === CORRECT_PIN) {
+        document.getElementById("pinOverlay").style.display = "none";
+        startSequence();
+    } else {
+        document.getElementById("pinInput").style.border = "2px solid red";
+        navigator.vibrate?.(200);
+    }
+};
 
-function start(){if(started)return;started=true;hint.remove();amb.volume=.5;amb.play().catch(()=>{});
-scanI=setInterval(()=>{scan.style.opacity=1;scan.style.top=Math.random()*100+'%';setTimeout(()=>scan.style.opacity=0,200);},300);
-warning.style.opacity=1;
-setTimeout(()=>warning.style.opacity=0,2000);
-countI=setInterval(()=>{
- time--; clock.textContent=format(time);
- if(time%25===0)alertS.play().catch(()=>{});
- if(time===30){vib([400,150,400]); flash(); jumpscare();}
- if(time<=0){clearInterval(countI);final();}
-},1000);
+function typeEffect(el, text, speed=20) {
+    let i = 0;
+    let writer = setInterval(() => {
+        el.innerHTML += text.charAt(i);
+        i++;
+        if (i >= text.length) clearInterval(writer);
+    }, speed);
 }
 
-function vib(p){if(navigator.vibrate)navigator.vibrate(p);}
-function flash(){document.body.style.background='#300';setTimeout(()=>document.body.style.background='#000',150);}
-function jumpscare(){sc.currentTime=0;sc.play().catch(()=>{});scare.style.display='flex';setTimeout(()=>scare.style.display='none',1500);}
+function startSequence() {
+    bios.style.display = "block";
 
-function final(){overlay.style.display='flex';vib([600,200,600]);alertS.play();}
+    let biosText =
+`
+BOOTING SYSTEM...
+CHECKING MEMORY BANKS..................OK
+CHECKING CPU REGISTERS.................OK
+CHECKING SECURITY CHANNEL..............OK
+ACCESS LEVEL: ROOT
+INITIALIZING DARKMODE KERNEL...........OK
+EXECUTING STARTUP ROUTINES...
+`;
 
-document.body.addEventListener('click',()=>start(),{once:true});
-document.getElementById('pin-container').style.display='flex';
-const pinSubmit=document.getElementById('pin-submit');
-pinSubmit.onclick=()=>{
- const pin=document.getElementById('pin-input').value;
- if(pin==='777777'){
-   location.reload();
- } else {
-   alert('PIN SALAH — AKSES DITOLAK');
- }
-};
-document.getElementById('payBtn').onclick=()=>modal.style.display='block';
-document.getElementById('decBtn').onclick=()=>alert('DEKRIPSI GAGAL — KUNCI TIDAK VALID');
-document.getElementById('openWa').onclick=()=>window.open('https://wa.me/6281574684348','_blank');
-</script></body>
+    typeEffect(bios, biosText, 20);
+
+    setTimeout(() => {
+        bios.style.display = "none";
+        launchTerminal();
+    }, 5000);
+}
+
+function launchTerminal() {
+    term.style.display = "block";
+
+    let t = "";
+    let lines = [
+        "root@system:~$ initializing modules...",
+        "loading shader.glx...",
+        "loading core.sys...",
+        "injecting visual distortion layer...",
+        "activating HUM resonance...",
+        "system status: STABLE",
+        "",
+        "root@system:~$ waiting for commands..."
+    ];
+
+    let i = 0;
+
+    let interval = setInterval(() => {
+        t += lines[i] + "\n";
+        term.innerHTML = t;
+        i++;
+        if (i >= lines.length) clearInterval(interval);
+    }, 500);
+}
+
+// Panic trigger (auto)
+setTimeout(() => {
+    panic.style.display = "flex";
+    hum.style.opacity = 1;
+}, 15000);
+
+</script>
+
+</body>
 </html>
