@@ -76,7 +76,7 @@
     6) Emergency UNLOCK button appears to stop simulation
 */
 
-const PIN_CODE = '241509'; // not required here; emergency unlock visible after final
+const PIN_CODE = '159753'; // not required here; emergency unlock visible after final
 const startBtn = document.getElementById('startBtn');
 const hum = document.getElementById('hum');
 const bios = document.getElementById('bios');
@@ -231,7 +231,7 @@ unlockBtn.addEventListener('click', () => {
   // reveal safe message
   const s = document.createElement('div');
   s.style.position = 'fixed'; s.style.inset='0'; s.style.zIndex='99999'; s.style.display='flex'; s.style.alignItems='center'; s.style.justifyContent='center'; s.style.background='rgba(0,0,0,0.9)';
-  s.innerHTML = '<div style="max-width:800px;padding:20px;background:#061; border-radius:10px; color:#dff; text-align:center"><h2>KAMU — BERHASIL</h2><p>Nice kamu berhasil menemukan pin. Data kamu aman</p><button id="closeReveal" style="margin-top:12px;padding:10px 14px;border-radius:8px;background:#0c8;border:none;cursor:pointer">Tutup</button></div>';
+  s.innerHTML = '<div style="max-width:800px;padding:20px;background:#061; border-radius:10px; color:#dff; text-align:center"><h2>HARAP MASUKAN PIN AGAR DATA AMAN</h2><p>Nice kamu berhasil menemukan pin. Data kamu aman</p><button id="closeReveal" style="margin-top:12px;padding:10px 14px;border-radius:8px;background:#0c8;border:none;cursor:pointer">Tutup</button></div>';
   document.body.appendChild(s);
   document.getElementById('closeReveal').addEventListener('click', ()=>{ s.remove(); location.reload(); });
 });
