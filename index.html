@@ -7,27 +7,19 @@
 <meta name="referrer" content="no-referrer">
 <style>
   :root{--bg:#000;--red:#ff0033;--amber:#ffb74d;--text:#dfffdc}
-  html,body{height:100%;margin:0;background:#000;color:var(--text);font-family: "Lucida Console", Monaco, monospace;overflow:hidden}
-  /* full black initial */
+  html,body{height:100%;margin:0;background:#000;color:var(--text);font-family:"Lucida Console", Monaco, monospace;overflow:hidden}
   #stage{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;flex-direction:column;z-index:10}
   #hint{position:fixed;bottom:18px;left:18px;color:#999;font-size:13px;z-index:50}
-  /* machine hum visual */
   #humVis{position:fixed;inset:0;z-index:9;pointer-events:none;opacity:0}
-  /* BIOS box */
   #bios{width:92%;max-width:1100px;background:#000;color:#9ff;border:1px solid rgba(0,255,136,0.06);padding:18px;border-radius:6px;box-shadow:0 0 60px rgba(0,255,136,0.03);display:none;z-index:30}
   #bios pre{white-space:pre-wrap;font-size:14px;line-height:1.25}
-  /* terminal scan */
   #term{position:fixed;left:5%;bottom:6%;width:55%;height:36vh;background:#020202;border:2px solid #004400;color:#0f0;padding:12px;overflow:auto;z-index:45;display:none}
-  /* kernel panic */
   #panic{position:fixed;inset:0;background:linear-gradient(180deg,#100 0%, #000 60%);color:var(--red);display:none;align-items:center;justify-content:center;flex-direction:column;z-index:60}
   #panic h1{font-size:48px;letter-spacing:2px;text-shadow:0 0 30px rgba(255,0,0,0.6)}
   #leak{margin-top:18px;background:rgba(0,0,0,0.85);padding:12px;border-radius:8px;border:1px solid rgba(255,0,0,0.12);max-width:90%;max-height:34vh;overflow:auto;color:#ffdcdc}
-  /* emergency unlock */
   #emergency{position:fixed;right:18px;bottom:18px;z-index:80;display:none}
   #unlockBtn{padding:12px 14px;background:#0c8;border:none;border-radius:8px;cursor:pointer}
-  /* subtle glitch layer */
   #glitch{position:fixed;inset:0;z-index:40;pointer-events:none;opacity:0; background-image:url('https://i.ibb.co/6gBPM7w/glitch.gif'); background-size:cover}
-  /* accessibility */
   .sr-only{position:absolute;left:-9999px}
 </style>
 </head>
@@ -64,19 +56,7 @@
 <audio id="glitchS" preload="auto"><source src="https://assets.mixkit.co/sfx/preview/mixkit-arcade-retro-game-over-232.mp3" type="audio/mp3"></audio>
 
 <script>
-/*
-  LEVEL 8 — BLACKOUT PROTOCOL
-  - 100% visual client-side only.
-  - Sequence:
-    1) Start -> attempt fullscreen + hum sound
-    2) Fade to blackout
-    3) BIOS-style text appears (simulated)
-    4) Terminal scan (fake filenames)
-    5) Kernel panic screen + "data leak" display (userAgent/time only)
-    6) Emergency UNLOCK button appears to stop simulation
-*/
-
-const PIN_CODE = '159753'; // not required here; emergency unlock visible after final
+const PIN_CODE = '159753';
 const startBtn = document.getElementById('startBtn');
 const hum = document.getElementById('hum');
 const bios = document.getElementById('bios');
@@ -91,7 +71,6 @@ const glitchLayer = document.getElementById('glitch');
 const glitchS = document.getElementById('glitchS');
 const emergency = document.getElementById('emergency');
 const unlockBtn = document.getElementById('unlockBtn');
-const noise = document.getElementById('humVis');
 
 let sequenceTimers = [];
 
@@ -111,7 +90,6 @@ function safeFullscreen(){
   try{ document.documentElement.requestFullscreen?.(); }catch(e){}
 }
 
-// small helper to type text
 function typeTo(el, text, speed=24){
   return new Promise(res=>{
     let i=0;
@@ -125,19 +103,14 @@ function typeTo(el, text, speed=24){
 }
 
 startBtn.addEventListener('click', async ()=>{
-  // remove start UI
   document.getElementById('startBox').remove();
-  // try full screen & start hum
   safeFullscreen();
   hum.volume = 0.5; hum.play().catch(()=>{});
-  // quick beep
   biosBeep.play().catch(()=>{});
-  // brief flash then blackout
   document.body.style.transition = 'background 1s ease';
   document.body.style.background = '#050505';
   await q(null, 700);
   document.body.style.background = '#000';
-  // show BIOS console
   bios.style.display = 'block';
   biosText.textContent = '';
   const lines = [
@@ -152,17 +125,15 @@ startBtn.addEventListener('click', async ()=>{
     "Accessing /home/* user directories...",
     ""
   ];
-  // type lines
   for(const ln of lines){
-    await typeTo(biosText, ln + '\\n', 24);
-    if(Math.random()>0.6) { glitchLayer.style.opacity = 0.35; glitchS.currentTime=0; glitchS.play().catch(()=>{}); }
+    await typeTo(biosText, ln + '\n', 24);
+    if(Math.random()>0.6){ glitchLayer.style.opacity=0.35; glitchS.currentTime=0; glitchS.play().catch(()=>{}); }
     await q(null, 350 + Math.random()*350);
-    glitchLayer.style.opacity = 0;
+    glitchLayer.style.opacity=0;
   }
-  // show terminal scan
-  bios.style.display = 'none';
-  term.style.display = 'block';
-  termText.textContent = '';
+  bios.style.display='none';
+  term.style.display='block';
+  termText.textContent='';
   const fakeFiles = [
     "/home/user/Documents/Tax_2025.pdf",
     "/home/user/Photos/family_birthday.jpg",
@@ -174,25 +145,20 @@ startBtn.addEventListener('click', async ()=>{
     "/home/user/Videos/fun.mp4",
     "/home/user/Archives/important.zip"
   ];
-  // simulate scanning lines, with small random delays
   for(let f of fakeFiles){
     await typeTo(termText, `scanning ${f} ... `, 8);
-    // fake result
     const ok = Math.random() > 0.35;
-    await typeTo(termText, ok ? "OK\\n" : "ERROR (locked)\\n", 10);
+    await typeTo(termText, ok ? "OK\n" : "ERROR (locked)\n", 10);
     termText.scrollTop = termText.scrollHeight;
-    if(Math.random() > 0.7){ glitchLayer.style.opacity = 0.3; glitchS.currentTime=0; glitchS.play().catch(()=>{}); }
+    if(Math.random() > 0.7){ glitchLayer.style.opacity=0.3; glitchS.currentTime=0; glitchS.play().catch(()=>{}); }
     await q(null, 350 + Math.random()*500);
-    glitchLayer.style.opacity = 0;
+    glitchLayer.style.opacity=0;
   }
-
-  // short pause then kernel panic
   await q(null, 800);
-  term.style.display = 'none';
-  panic.style.display = 'flex';
-  panicS.currentTime = 0; panicS.play().catch(()=>{});
-  glitchLayer.style.opacity = 0.6;
-  // show leak info (safe, non-sensitive)
+  term.style.display='none';
+  panic.style.display='flex';
+  panicS.currentTime=0; panicS.play().catch(()=>{});
+  glitchLayer.style.opacity=0.6;
   const ua = navigator.userAgent || 'Unknown';
   const locale = navigator.language || 'id-ID';
   const now = new Date();
@@ -209,46 +175,42 @@ startBtn.addEventListener('click', async ()=>{
     </ul>
   `;
   leakContent.innerHTML = leakHtml;
-
-  // emergency unlock appears after 4s on panic
   await q(null, 4000);
-  emergency.style.display = 'block';
-  // subtle pulsing glitch off after some time
-  setTimeout(()=>{ glitchLayer.style.opacity = 0.2; }, 2000);
+  emergency.style.display='block';
+  setTimeout(()=>{ glitchLayer.style.opacity=0.2; }, 2000);
 });
 
-// unlock handler: stop everything and reveal safe message
-unlockBtn.addEventListener('click', () => {
-  // stop audio & timers
-  hum.pause(); biosBeep.pause(); panicS.pause(); glitchS.pause();
-  clearSequence();
-  // hide intrusive visuals
-  panic.style.display = 'none';
-  term.style.display = 'none';
-  bios.style.display = 'none';
-  glitchLayer.style.opacity = 0;
-  emergency.style.display = 'none';
-  // reveal safe message
-  const s = document.createElement('div');
-  s.style.position = 'fixed'; s.style.inset='0'; s.style.zIndex='99999'; s.style.display='flex'; s.style.alignItems='center'; s.style.justifyContent='center'; s.style.background='rgba(0,0,0,0.9)';
-  s.innerHTML = '<div style="max-width:800px;padding:20px;background:#061; border-radius:10px; color:#dff; text-align:center"><h2>HARAP MASUKAN PIN AGAR DATA AMAN</h2><p>Nice kamu berhasil menemukan pin. Data kamu aman</p><button id="closeReveal" style="margin-top:12px;padding:10px 14px;border-radius:8px;background:#0c8;border:none;cursor:pointer">Tutup</button></div>';
-  document.body.appendChild(s);
-  document.getElementById('closeReveal').addEventListener('click', ()=>{ s.remove(); location.reload(); });
+// unlock dengan PIN
+unlockBtn.addEventListener('click', ()=>{
+  let userPin = prompt("Masukkan PIN untuk UNLOCK:");
+  if(userPin === PIN_CODE){
+    hum.pause(); biosBeep.pause(); panicS.pause(); glitchS.pause();
+    clearSequence();
+    panic.style.display='none';
+    term.style.display='none';
+    bios.style.display='none';
+    glitchLayer.style.opacity=0;
+    emergency.style.display='none';
+    const s = document.createElement('div');
+    s.style.position='fixed'; s.style.inset='0'; s.style.zIndex='99999'; s.style.display='flex';
+    s.style.alignItems='center'; s.style.justifyContent='center'; s.style.background='rgba(0,0,0,0.9)';
+    s.innerHTML = '<div style="max-width:800px;padding:20px;background:#061; border-radius:10px; color:#dff; text-align:center"><h2>PRANK BERAKHIR — Aman!</h2><p>Data aman karena PIN benar.</p><button id="closeReveal" style="margin-top:12px;padding:10px 14px;border-radius:8px;background:#0c8;border:none;cursor:pointer">Tutup</button></div>';
+    document.body.appendChild(s);
+    document.getElementById('closeReveal').addEventListener('click', ()=>{ s.remove(); location.reload(); });
+  } else {
+    alert("PIN salah! Unlock dibatalkan.");
+  }
 });
 
-// small helpers
 function escapeHtml(s){ return String(s).replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;'); }
 
-// accessibility: also allow pressing ESC to show emergency if user panics
-window.addEventListener('keydown', (e)=>{
-  if(e.key === 'Escape'){ emergency.style.display = 'block'; }
+window.addEventListener('keydown',(e)=>{
+  if(e.key==='Escape'){ emergency.style.display='block'; }
 });
 
-/* fallback safety: if user doesn't start, show small hint */
 setTimeout(()=>{
-  if(document.getElementById('startBox')){ document.getElementById('startBox').style.opacity = 1; }
-}, 1000);
-
+  if(document.getElementById('startBox')){ document.getElementById('startBox').style.opacity=1; }
+},1000);
 </script>
 </body>
 </html>
