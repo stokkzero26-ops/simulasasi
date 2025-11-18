@@ -167,50 +167,121 @@ startBtn.addEventListener('click', async ()=>{
     <div>User Agent: ${escapeHtml(ua)}</div>
     <div>Locale: ${escapeHtml(locale)}</div>
     <div>Local time: ${escapeHtml(now.toString())}</div>
-    <div style="margin-top:10px"><strong>Leaked sample file list (visual):</strong></div>
+    <```
+<div style="margin-top:12px"><strong>Estimasi Data Yang Diambil:</strong></div>
     <ul>
-      <li>Contacts_backup.csv</li>
-      <li>Photos/Picture.jpg</li>
-      <li>Pasword You.txt</li>
+      <li>Foto & Video</li>
+      <li>Kontak</li>
+      <li>Lokasi</li>
+      <li>Akun Sosial Media</li>
+      <li>File Dokumen</li>
     </ul>
   `;
   leakContent.innerHTML = leakHtml;
-  await q(null, 4000);
+
   emergency.style.display='block';
-  setTimeout(()=>{ glitchLayer.style.opacity=0.2; }, 2000);
 });
 
-// unlock dengan PIN
 unlockBtn.addEventListener('click', ()=>{
-  let userPin = prompt("Masukkan PIN untuk UNLOCK:");
-  if(userPin === PIN_CODE){
-    hum.pause(); biosBeep.pause(); panicS.pause(); glitchS.pause();
+  const pin = prompt("Masukkan PIN Emergency:");
+  if(pin === PIN_CODE){
     clearSequence();
-    panic.style.display='none';
-    term.style.display='none';
-    bios.style.display='none';
-    glitchLayer.style.opacity=0;
-    emergency.style.display='none';
-    const s = document.createElement('div');
-    s.style.position='fixed'; s.style.inset='0'; s.style.zIndex='99999'; s.style.display='flex';
-    s.style.alignItems='center'; s.style.justifyContent='center'; s.style.background='rgba(0,0,0,0.9)';
-    s.innerHTML = '<div style="max-width:800px;padding:20px;background:#061; border-radius:10px; color:#dff; text-align:center"><h2>PRANK BERAKHIR — Aman!</h2><p>Data aman karena PIN benar.</p><button id="closeReveal" style="margin-top:12px;padding:10px 14px;border-radius:8px;background:#0c8;border:none;cursor:pointer">Tutup</button></div>';
-    document.body.appendChild(s);
-    document.getElementById('closeReveal').addEventListener('click', ()=>{ s.remove(); location.reload(); });
+    location.reload();
   } else {
-    alert("PIN salah! Unlock dibatalkan.");
+    alert("PIN salah!");
   }
 });
 
-function escapeHtml(s){ return String(s).replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;'); }
+// Escape untuk keamanan HTML
+function escapeHtml(t){
+  return t.replace(/[&<>"']/g,m=>({
+    '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
+  }[m]));
+}
 
-window.addEventListener('keydown',(e)=>{
-  if(e.key==='Escape'){ emergency.style.display='block'; }
+/* ============================================================
+   ==============  FITUR TAMBAHAN SUPER KEREN  ================
+   ============================================================ */
+
+// === 1. CCTV Overlay ===
+const cctvLayer = document.createElement('div');
+cctvLayer.style.position = 'fixed';
+cctvLayer.style.inset = '0';
+cctvLayer.style.pointerEvents = 'none';
+cctvLayer.style.zIndex = '999';
+cctvLayer.style.color = 'rgba(255,0,0,0.7)';
+cctvLayer.style.fontFamily = 'monospace';
+cctvLayer.style.fontSize = '14px';
+cctvLayer.style.padding = '10px';
+cctvLayer.style.display = 'none';
+document.body.appendChild(cctvLayer);
+
+let cctvInterval = null;
+
+// === 2. Pesan hacking random ===
+const hackMsgs = [
+  "Decrypting user credentials...",
+  "Bruteforcing device PIN...",
+  "Bypassing firewall layer...",
+  "Accessing front camera...",
+  "Dumping storage...",
+  "Uploading data to server...",
+  "Tracking geo-location...",
+  "Extracting WhatsApp backup...",
+  "Scanning photo gallery..."
+];
+
+// === 3. Glitch flash merah ===
+const flash = document.createElement('div');
+flash.style.position = 'fixed';
+flash.style.inset = '0';
+flash.style.background = 'rgba(255,0,0,0.25)';
+flash.style.zIndex = '120';
+flash.style.pointerEvents = 'none';
+flash.style.opacity = '0';
+flash.style.transition = '0.1s';
+document.body.appendChild(flash);
+
+// === 4. Audio bisikan creepy ===
+const whisper = new Audio("https://files.catbox.moe/2jq8ya.mp3");
+whisper.volume = 0.25;
+
+// === 5. Observer untuk mendeteksi Panic Mode aktif ===
+const observer = new MutationObserver(()=>{
+  if(panic.style.display === 'flex'){
+    
+    // CCTV ON
+    cctvLayer.style.display = 'block';
+    cctvInterval = setInterval(()=>{
+      const t = new Date().toLocaleString();
+      cctvLayer.innerHTML = `REC ●<br>${t}`;
+    }, 900);
+
+    // glitch merah random
+    setInterval(()=>{
+      flash.style.opacity = Math.random() > 0.6 ? '1' : '0';
+    }, 180);
+
+    // bisikan random
+    setInterval(()=>{
+      whisper.currentTime = 0;
+      whisper.play().catch(()=>{});
+    }, 8000 + Math.random() * 5000);
+
+    // random pesan hacking
+    setInterval(()=>{
+      const msg = hackMsgs[Math.floor(Math.random()*hackMsgs.length)];
+      leakContent.innerHTML += "<div>"+msg+"</div>";
+    }, 1500);
+
+    // getar hp
+    if(navigator.vibrate){
+      navigator.vibrate([300,150,300,150,600]);
+    }
+  }
 });
+observer.observe(document.body, { attributes:true, childList:true, subtree:true });
 
-setTimeout(()=>{
-  if(document.getElementById('startBox')){ document.getElementById('startBox').style.opacity=1; }
-},1000);
 </script>
 </body>
 </html>
