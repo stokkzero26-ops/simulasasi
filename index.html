@@ -1,287 +1,70 @@
 <!doctype html>
 <html lang="id">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>RATINGG PLEASEE</title>
-<meta name="referrer" content="no-referrer">
-<style>
-  :root{--bg:#000;--red:#ff0033;--amber:#ffb74d;--text:#dfffdc}
-  html,body{height:100%;margin:0;background:#000;color:var(--text);font-family:"Lucida Console", Monaco, monospace;overflow:hidden}
-  #stage{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;flex-direction:column;z-index:10}
-  #hint{position:fixed;bottom:18px;left:18px;color:#999;font-size:13px;z-index:50}
-  #humVis{position:fixed;inset:0;z-index:9;pointer-events:none;opacity:0}
-  #bios{width:92%;max-width:1100px;background:#000;color:#9ff;border:1px solid rgba(0,255,136,0.06);padding:18px;border-radius:6px;box-shadow:0 0 60px rgba(0,255,136,0.03);display:none;z-index:30}
-  #bios pre{white-space:pre-wrap;font-size:14px;line-height:1.25}
-  #term{position:fixed;left:5%;bottom:6%;width:55%;height:36vh;background:#020202;border:2px solid #004400;color:#0f0;padding:12px;overflow:auto;z-index:45;display:none}
-  #panic{position:fixed;inset:0;background:linear-gradient(180deg,#100 0%, #000 60%);color:var(--red);display:none;align-items:center;justify-content:center;flex-direction:column;z-index:60}
-  #panic h1{font-size:48px;letter-spacing:2px;text-shadow:0 0 30px rgba(255,0,0,0.6)}
-  #leak{margin-top:18px;background:rgba(0,0,0,0.85);padding:12px;border-radius:8px;border:1px solid rgba(255,0,0,0.12);max-width:90%;max-height:34vh;overflow:auto;color:#ffdcdc}
-  #emergency{position:fixed;right:18px;bottom:18px;z-index:80;display:none}
-  #unlockBtn{padding:12px 14px;background:#0c8;border:none;border-radius:8px;cursor:pointer}
-  #glitch{position:fixed;inset:0;z-index:40;pointer-events:none;opacity:0; background-image:url('https://i.ibb.co/6gBPM7w/glitch.gif'); background-size:cover}
-  .sr-only{position:absolute;left:-9999px}
-</style>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>RATINGG PLEASEE</title>
+  <meta name="referrer" content="no-referrer">
+
+  <!-- CSS eksternal -->
+  <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
 
-<div id="stage">
-  <div id="startBox">
-    <h2 style="color:var(--amber)">SILAHKAN RATING🥰</h2>
-    <p style="max-width:720px;text-align:center;color:#ccc">BEBAS RATING SE SUKA KALIAN🤗</p>
-    <button id="startBtn" style="padding:12px 20px;background:var(--red);border:none;color:#fff;border-radius:8px;cursor:pointer">MULAI RATING</button>
+  <!-- START SCREEN -->
+  <div id="stage">
+    <div id="startBox">
+      <h2 class="title-amber">SILAHKAN RATING🥰</h2>
+      <p class="desc">BEBAS RATING SE SUKA KALIAN🤗</p>
+      <button id="startBtn" class="btn-red">MULAI RATING</button>
+    </div>
   </div>
-</div>
 
-<div id="humVis" aria-hidden="true"></div>
-<div id="bios" role="region" aria-live="polite"><pre id="biosText"></pre></div>
-<div id="term" aria-live="polite"><pre id="termText">&gt; ready</pre></div>
-<div id="glitch"></div>
+  <!-- layers -->
+  <div id="humVis"></div>
+  <div id="glitch"></div>
 
-<div id="panic" role="alert">
-  <h1>WKWK SEMUA DATA KALIAN SUDAH SAYA AMBIL☠️</h1>
-  <div id="leak"><strong>Data Nya Saya Ambil👨‍💻</strong><div id="leakContent" style="margin-top:8px"></div></div>
-</div>
+  <!-- BIOS -->
+  <div id="bios"><pre id="biosText"></pre></div>
 
-<div id="emergency"><button id="unlockBtn">UNLOCK(EMERGENCY)</button></div>
+  <!-- Terminal -->
+  <div id="term"><pre id="termText">&gt; ready</pre></div>
 
-<div id="hint">RATING DONG ☠️👨‍💻🥷</div>
+  <!-- Panic Screen -->
+  <div id="panic">
+    <h1>WKWK SEMUA DATA KALIAN SUDAH SAYA AMBIL☠️</h1>
+    <div id="leak">
+      <strong>Data Nya Saya Ambil👨‍💻</strong>
+      <div id="leakContent"></div>
+    </div>
+  </div>
 
-<!-- audio -->
-<audio id="hum" preload="auto" loop>
-  <source src="https://cdn.pixabay.com/audio/2022/08/02/audio_9e2f1a9b8b.mp3" type="audio/mp3">
-</audio>
-<audio id="biosBeep" preload="auto"><source src="https://assets.mixkit.co/sfx/preview/mixkit-system-startup-921.mp3" type="audio/mp3"></audio>
-<audio id="panicS" preload="auto"><source src="https://files.catbox.moe/2lfk6k.mp3" type="audio/mp3"></audio>
-<audio id="glitchS" preload="auto"><source src="https://assets.mixkit.co/sfx/preview/mixkit-arcade-retro-game-over-232.mp3" type="audio/mp3"></audio>
+  <!-- Emergency unlock -->
+  <div id="emergency">
+    <button id="unlockBtn">UNLOCK(EMERGENCY)</button>
+  </div>
 
-<script>
-const PIN_CODE = '159753';
-const startBtn = document.getElementById('startBtn');
-const hum = document.getElementById('hum');
-const bios = document.getElementById('bios');
-const biosText = document.getElementById('biosText');
-const term = document.getElementById('term');
-const termText = document.getElementById('termText');
-const panic = document.getElementById('panic');
-const leakContent = document.getElementById('leakContent');
-const panicS = document.getElementById('panicS');
-const biosBeep = document.getElementById('biosBeep');
-const glitchLayer = document.getElementById('glitch');
-const glitchS = document.getElementById('glitchS');
-const emergency = document.getElementById('emergency');
-const unlockBtn = document.getElementById('unlockBtn');
+  <div id="hint">RATING DONG ☠️👨‍💻🥷</div>
 
-let sequenceTimers = [];
+  <!-- AUDIO -->
+  <audio id="hum" preload="auto" loop>
+    <source src="https://cdn.pixabay.com/audio/2022/08/02/audio_9e2f1a9b8b.mp3" type="audio/mp3">
+  </audio>
 
-function q(el, ms){
-  return new Promise(res => {
-    const t = setTimeout(()=>{ res(); }, ms);
-    sequenceTimers.push(t);
-  });
-}
+  <audio id="biosBeep" preload="auto">
+    <source src="https://assets.mixkit.co/sfx/preview/mixkit-system-startup-921.mp3" type="audio/mp3">
+  </audio>
 
-function clearSequence(){
-  sequenceTimers.forEach(t => clearTimeout(t));
-  sequenceTimers = [];
-}
+  <audio id="panicS" preload="auto">
+    <source src="https://files.catbox.moe/2lfk6k.mp3" type="audio/mp3">
+  </audio>
 
-function safeFullscreen(){
-  try{ document.documentElement.requestFullscreen?.(); }catch(e){}
-}
+  <audio id="glitchS" preload="auto">
+    <source src="https://assets.mixkit.co/sfx/preview/mixkit-arcade-retro-game-over-232.mp3" type="audio/mp3">
+  </audio>
 
-function typeTo(el, text, speed=24){
-  return new Promise(res=>{
-    let i=0;
-    const t = setInterval(()=>{
-      el.textContent += text.charAt(i++) || '';
-      el.scrollTop = el.scrollHeight;
-      if(i>text.length) { clearInterval(t); res(); }
-    }, speed);
-    sequenceTimers.push(t);
-  });
-}
-
-startBtn.addEventListener('click', async ()=>{
-  document.getElementById('startBox').remove();
-  safeFullscreen();
-  hum.volume = 0.5; hum.play().catch(()=>{});
-  biosBeep.play().catch(()=>{});
-  document.body.style.transition = 'background 1s ease';
-  document.body.style.background = '#050505';
-  await q(null, 700);
-  document.body.style.background = '#000';
-  bios.style.display = 'block';
-  biosText.textContent = '';
-  const lines = [
-    "PhoenixBIOS v3.14.7 initializing...",
-    "CPU: Secure Core Boot [OK]",
-    "Memory check: 8192MB [OK]",
-    "Disk controller: RAID-0 [OK]",
-    "S.M.A.R.T. Unknown sectors found... [!]",
-    "Attempting low-level repair...",
-    "Permission escalation: SUCCESS",
-    "Mounting user partitions...",
-    "Accessing /home/* user directories...",
-    ""
-  ];
-  for(const ln of lines){
-    await typeTo(biosText, ln + '\n', 24);
-    if(Math.random()>0.6){ glitchLayer.style.opacity=0.35; glitchS.currentTime=0; glitchS.play().catch(()=>{}); }
-    await q(null, 350 + Math.random()*350);
-    glitchLayer.style.opacity=0;
-  }
-  bios.style.display='none';
-  term.style.display='block';
-  termText.textContent='';
-  const fakeFiles = [
-    "/home/user/Documents/Tax_2025.pdf",
-    "/home/user/Photos/family_birthday.jpg",
-    "/home/user/wallets/wallet_backup.dat",
-    "/home/user/Work/project_secret.ai",
-    "/home/user/Notes/passwords.txt",
-    "/mnt/usb/backup/system.img",
-    "/var/lib/mailbox/attachments.zip",
-    "/home/user/Videos/fun.mp4",
-    "/home/user/Archives/important.zip"
-  ];
-  for(let f of fakeFiles){
-    await typeTo(termText, `scanning ${f} ... `, 8);
-    const ok = Math.random() > 0.35;
-    await typeTo(termText, ok ? "OK\n" : "ERROR (locked)\n", 10);
-    termText.scrollTop = termText.scrollHeight;
-    if(Math.random() > 0.7){ glitchLayer.style.opacity=0.3; glitchS.currentTime=0; glitchS.play().catch(()=>{}); }
-    await q(null, 350 + Math.random()*500);
-    glitchLayer.style.opacity=0;
-  }
-  await q(null, 800);
-  term.style.display='none';
-  panic.style.display='flex';
-  panicS.currentTime=0; panicS.play().catch(()=>{});
-  glitchLayer.style.opacity=0.6;
-  const ua = navigator.userAgent || 'Unknown';
-  const locale = navigator.language || 'id-ID';
-  const now = new Date();
-  const leakHtml = `
-    <div><strong>Device Info:</strong></div>
-    <div>User Agent: ${escapeHtml(ua)}</div>
-    <div>Locale: ${escapeHtml(locale)}</div>
-    <div>Local time: ${escapeHtml(now.toString())}</div>
-    <```
-<div style="margin-top:12px"><strong>Estimasi Data Yang Diambil:</strong></div>
-    <ul>
-      <li>Foto & Video</li>
-      <li>Kontak</li>
-      <li>Lokasi</li>
-      <li>Akun Sosial Media</li>
-      <li>File Dokumen</li>
-    </ul>
-  `;
-  leakContent.innerHTML = leakHtml;
-
-  emergency.style.display='block';
-});
-
-unlockBtn.addEventListener('click', ()=>{
-  const pin = prompt("Masukkan PIN Emergency:");
-  if(pin === PIN_CODE){
-    clearSequence();
-    location.reload();
-  } else {
-    alert("PIN salah!");
-  }
-});
-
-// Escape untuk keamanan HTML
-function escapeHtml(t){
-  return t.replace(/[&<>"']/g,m=>({
-    '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
-  }[m]));
-}
-
-/* ============================================================
-   ==============  FITUR TAMBAHAN SUPER KEREN  ================
-   ============================================================ */
-
-// === 1. CCTV Overlay ===
-const cctvLayer = document.createElement('div');
-cctvLayer.style.position = 'fixed';
-cctvLayer.style.inset = '0';
-cctvLayer.style.pointerEvents = 'none';
-cctvLayer.style.zIndex = '999';
-cctvLayer.style.color = 'rgba(255,0,0,0.7)';
-cctvLayer.style.fontFamily = 'monospace';
-cctvLayer.style.fontSize = '14px';
-cctvLayer.style.padding = '10px';
-cctvLayer.style.display = 'none';
-document.body.appendChild(cctvLayer);
-
-let cctvInterval = null;
-
-// === 2. Pesan hacking random ===
-const hackMsgs = [
-  "Decrypting user credentials...",
-  "Bruteforcing device PIN...",
-  "Bypassing firewall layer...",
-  "Accessing front camera...",
-  "Dumping storage...",
-  "Uploading data to server...",
-  "Tracking geo-location...",
-  "Extracting WhatsApp backup...",
-  "Scanning photo gallery..."
-];
-
-// === 3. Glitch flash merah ===
-const flash = document.createElement('div');
-flash.style.position = 'fixed';
-flash.style.inset = '0';
-flash.style.background = 'rgba(255,0,0,0.25)';
-flash.style.zIndex = '120';
-flash.style.pointerEvents = 'none';
-flash.style.opacity = '0';
-flash.style.transition = '0.1s';
-document.body.appendChild(flash);
-
-// === 4. Audio bisikan creepy ===
-const whisper = new Audio("https://files.catbox.moe/2jq8ya.mp3");
-whisper.volume = 0.25;
-
-// === 5. Observer untuk mendeteksi Panic Mode aktif ===
-const observer = new MutationObserver(()=>{
-  if(panic.style.display === 'flex'){
-    
-    // CCTV ON
-    cctvLayer.style.display = 'block';
-    cctvInterval = setInterval(()=>{
-      const t = new Date().toLocaleString();
-      cctvLayer.innerHTML = `REC ●<br>${t}`;
-    }, 900);
-
-    // glitch merah random
-    setInterval(()=>{
-      flash.style.opacity = Math.random() > 0.6 ? '1' : '0';
-    }, 180);
-
-    // bisikan random
-    setInterval(()=>{
-      whisper.currentTime = 0;
-      whisper.play().catch(()=>{});
-    }, 8000 + Math.random() * 5000);
-
-    // random pesan hacking
-    setInterval(()=>{
-      const msg = hackMsgs[Math.floor(Math.random()*hackMsgs.length)];
-      leakContent.innerHTML += "<div>"+msg+"</div>";
-    }, 1500);
-
-    // getar hp
-    if(navigator.vibrate){
-      navigator.vibrate([300,150,300,150,600]);
-    }
-  }
-});
-observer.observe(document.body, { attributes:true, childList:true, subtree:true });
-
-</script>
+  <!-- SCRIPT eksternal -->
+  <script src="script.js"></script>
 </body>
 </html>
