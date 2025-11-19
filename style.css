@@ -1,143 +1,110 @@
-:root {
-  --bg:#000;
-  --red:#ff0033;
-  --amber:#ffb74d;
-  --text:#dfffdc;
+/* ===============================
+   GLOBAL STYLE
+=============================== */
+body {
+    background: black;
+    color: #ff0000;
+    font-family: 'Courier New', monospace;
+    overflow: hidden;
+    margin: 0;
+    padding: 0;
 }
 
-html,body {
-  height:100%;
-  margin:0;
-  background:#000;
-  color:var(--text);
-  font-family:"Lucida Console", Monaco, monospace;
-  overflow:hidden;
+/* Terminal */
+#terminal {
+    white-space: pre-line;
+    padding: 20px;
+    font-size: 16px;
+    color: #0aff0a;
+    height: 100vh;
+    overflow-y: auto;
 }
 
-#stage {
-  position:fixed;
-  inset:0;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  flex-direction:column;
-  z-index:10;
+/* ===============================
+   STATIC NOISE
+=============================== */
+#staticNoise {
+    position: fixed;
+    inset: 0;
+    background: url('https://media.giphy.com/media/oEI9uBYSzLpBK/giphy.gif');
+    background-size: cover;
+    display: none;
+    z-index: 1500;
+    opacity: 0.25;
 }
 
-#hint {
-  position:fixed;
-  bottom:18px;
-  left:18px;
-  color:#999;
-  font-size:13px;
-  z-index:50;
+/* ===============================
+   POPUP SPAM
+=============================== */
+.popup {
+    position: fixed;
+    width: 240px;
+    padding: 15px;
+    background: #111;
+    border: 2px solid red;
+    color: red;
+    z-index: 999;
+    font-size: 14px;
+    animation: shake 0.3s infinite;
 }
 
-#humVis {
-  position:fixed;
-  inset:0;
-  z-index:9;
-  pointer-events:none;
-  opacity:0;
+@keyframes shake {
+    0% { transform: translate(0,0); }
+    25% { transform: translate(2px,-2px); }
+    50% { transform: translate(-2px,2px); }
+    100% { transform: translate(0,0); }
 }
 
-#bios {
-  width:92%;
-  max-width:1100px;
-  background:#000;
-  color:#9ff;
-  border:1px solid rgba(0,255,136,0.06);
-  padding:18px;
-  border-radius:6px;
-  box-shadow:0 0 60px rgba(0,255,136,0.03);
-  display:none;
-  z-index:30;
+/* ===============================
+   BSOD SCREEN
+=============================== */
+#bsod {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: #001aff;
+    color: white;
+    font-size: 20px;
+    padding: 40px;
+    z-index: 2000;
+    text-align: left;
+    font-family: Consolas, monospace;
+    line-height: 1.6;
 }
 
-#bios pre {
-  white-space:pre-wrap;
-  font-size:14px;
-  line-height:1.25;
+/* ===============================
+   LOCKDOWN OVERLAY
+=============================== */
+#lockdown {
+    display: none;
+    background: rgba(255, 0, 0, 0.85);
+    color: white;
+    font-size: 28px;
+    font-weight: bold;
+    position: fixed;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 5000;
+    text-shadow: 0 0 20px black;
+    text-align: center;
 }
 
-#term {
-  position:fixed;
-  left:5%;
-  bottom:6%;
-  width:55%;
-  height:36vh;
-  background:#020202;
-  border:2px solid #004400;
-  color:#0f0;
-  padding:12px;
-  overflow:auto;
-  z-index:45;
-  display:none;
-}
-
-#glitch {
-  position:fixed;
-  inset:0;
-  z-index:40;
-  pointer-events:none;
-  opacity:0;
-  background-image:url('https://i.ibb.co/6gBPM7w/glitch.gif');
-  background-size:cover;
-}
-
-#panic {
-  position:fixed;
-  inset:0;
-  background:linear-gradient(180deg,#100 0%, #000 60%);
-  color:var(--red);
-  display:none;
-  align-items:center;
-  justify-content:center;
-  flex-direction:column;
-  z-index:60;
-}
-
-#panic h1 {
-  font-size:48px;
-  letter-spacing:2px;
-  text-shadow:0 0 30px rgba(255,0,0,0.6)
-}
-
-#leak {
-  margin-top:18px;
-  background:rgba(0,0,0,0.85);
-  padding:12px;
-  border-radius:8px;
-  border:1px solid rgba(255,0,0,0.12);
-  max-width:90%;
-  max-height:34vh;
-  overflow:auto;
-  color:#ffdcdc;
-}
-
-#emergency {
-  position:fixed;
-  right:18px;
-  bottom:18px;
-  z-index:80;
-  display:none;
-}
-
-.btn-red {
-  padding:12px 20px;
-  background:var(--red);
-  border:none;
-  color:#fff;
-  border-radius:8px;
-  cursor:pointer;
-}
-
-.title-amber {
-  color:var(--amber);
-}
-
-.desc {
-  max-width:720px;
-  text-align:center;
-  color:#ccc;
-}
+/* ===============================
+   HACKER CHAT
+=============================== */
+#hackerChat {
+    position: fixed;
+    bottom: 10px;
+    left: 10px;
+    width: 300px;
+    background: black;
+    border: 2px solid red;
+    color: red;
+    padding: 10px;
+    display: none;
+    animation: shake 0.2s infinite;
+    z-index: 3000;
+    font-size: 14px;
+  }
