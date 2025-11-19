@@ -1,70 +1,192 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>RATINGG PLEASEE</title>
-  <meta name="referrer" content="no-referrer">
+<meta charset="UTF-8">
+<title>Ransomware Simulation - Hardcore Mode</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+    body {
+        background: black;
+        color: #ff0000;
+        font-family: 'Courier New', monospace;
+        overflow: hidden;
+        margin: 0;
+        padding: 0;
+    }
 
-  <!-- CSS eksternal -->
-  <link rel="stylesheet" href="style.css">
+    #terminal {
+        white-space: pre-line;
+        padding: 20px;
+        font-size: 16px;
+        color: #0aff0a;
+        height: 100vh;
+        overflow-y: auto;
+    }
+
+    /* Static Noise */
+    #staticNoise {
+        position: fixed;
+        inset: 0;
+        background: url('https://media.giphy.com/media/oEI9uBYSzLpBK/giphy.gif');
+        background-size: cover;
+        display: none;
+        z-index: 1500;
+        opacity: 0.2;
+    }
+
+    /* Popup */
+    .popup {
+        position: fixed;
+        width: 240px;
+        padding: 15px;
+        background: #111;
+        border: 2px solid red;
+        color: red;
+        z-index: 999;
+        font-size: 14px;
+        animation: shake 0.3s infinite;
+    }
+
+    @keyframes shake {
+        0% { transform: translate(0,0); }
+        25% { transform: translate(2px,-2px); }
+        50% { transform: translate(-2px,2px); }
+        100% { transform: translate(0,0); }
+    }
+
+    /* BSOD */
+    #bsod {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: #001aff;
+        color: white;
+        font-size: 20px;
+        padding: 40px;
+        z-index: 2000;
+        text-align: left;
+        font-family: Consolas;
+    }
+
+    /* Lockdown Overlay */
+    #lockdown {
+        display: none;
+        background: rgba(255, 0, 0, 0.85);
+        color: white;
+        font-size: 28px;
+        font-weight: bold;
+        position: fixed;
+        inset: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 5000;
+        text-shadow: 0 0 20px black;
+    }
+
+    /* Chat Hacker */
+    #hackerChat {
+        position: fixed;
+        bottom: 10px;
+        left: 10px;
+        width: 300px;
+        background: black;
+        border: 2px solid red;
+        color: red;
+        padding: 10px;
+        display: none;
+        animation: shake 0.2s infinite;
+        z-index: 3000;
+    }
+</style>
 </head>
-
 <body>
 
-  <!-- START SCREEN -->
-  <div id="stage">
-    <div id="startBox">
-      <h2 class="title-amber">SILAHKAN RATING🥰</h2>
-      <p class="desc">BEBAS RATING SE SUKA KALIAN🤗</p>
-      <button id="startBtn" class="btn-red">MULAI RATING</button>
-    </div>
-  </div>
+<div id="terminal">Initializing ransomware simulation...\n</div>
 
-  <!-- layers -->
-  <div id="humVis"></div>
-  <div id="glitch"></div>
+<div id="staticNoise"></div>
+<div id="bsod">A problem has been detected and Windows has been shut down to prevent damage.\n\nFAKE_RANSOMWARE_ERROR_CODE: 0x000000DEADC0DE\n\nCollecting data for crash dump...\nRestarting in 10 seconds...</div>
+<div id="lockdown">🔒 SYSTEM LOCKDOWN ACTIVE<br>ENTER PIN TO UNLOCK</div>
 
-  <!-- BIOS -->
-  <div id="bios"><pre id="biosText"></pre></div>
+<div id="hackerChat">👤 Hacker: "Bayar sebelum waktu habis… Kamu cuma punya 5 menit."</div>
 
-  <!-- Terminal -->
-  <div id="term"><pre id="termText">&gt; ready</pre></div>
+<script>
+// ========== AUTO TYPING TERMINAL ================
+const terminal = document.getElementById("terminal");
+let hackerLines = [
+    "[SCAN] Encrypting system files...",
+    "[LOCK] Locking user directories...",
+    "[WARN] Firewall bypassed.",
+    "[INFO] Uploading device fingerprint...",
+    "[CRITICAL] CPU Overload!",
+    "[ALERT] Data destruction in progress...",
+];
 
-  <!-- Panic Screen -->
-  <div id="panic">
-    <h1>WKWK SEMUA DATA KALIAN SUDAH SAYA AMBIL☠️</h1>
-    <div id="leak">
-      <strong>Data Nya Saya Ambil👨‍💻</strong>
-      <div id="leakContent"></div>
-    </div>
-  </div>
+function typeLine() {
+    let line = hackerLines[Math.floor(Math.random() * hackerLines.length)];
+    terminal.innerHTML += line + "\n";
+    terminal.scrollTop = terminal.scrollHeight;
+}
+setInterval(typeLine, 600);
 
-  <!-- Emergency unlock -->
-  <div id="emergency">
-    <button id="unlockBtn">UNLOCK(EMERGENCY)</button>
-  </div>
+// ========== STATIC NOISE ================
+setTimeout(() => { 
+    document.getElementById("staticNoise").style.display = "block"; 
+}, 3000);
 
-  <div id="hint">RATING DONG ☠️👨‍💻🥷</div>
+setTimeout(() => { 
+    document.getElementById("staticNoise").style.display = "none"; 
+}, 7000);
 
-  <!-- AUDIO -->
-  <audio id="hum" preload="auto" loop>
-    <source src="https://cdn.pixabay.com/audio/2022/08/02/audio_9e2f1a9b8b.mp3" type="audio/mp3">
-  </audio>
+// ========== POPUP SPAM ==================
+function spawnPopup() {
+    let p = document.createElement("div");
+    p.className = "popup";
+    p.innerText = "⚠ FILE ENCRYPTED!\nPAY TO RESTORE!";
+    p.style.top = Math.random() * 80 + "%";
+    p.style.left = Math.random() * 80 + "%";
+    document.body.appendChild(p);
 
-  <audio id="biosBeep" preload="auto">
-    <source src="https://assets.mixkit.co/sfx/preview/mixkit-system-startup-921.mp3" type="audio/mp3">
-  </audio>
+    setTimeout(() => p.remove(), 5000);
+}
 
-  <audio id="panicS" preload="auto">
-    <source src="https://files.catbox.moe/2lfk6k.mp3" type="audio/mp3">
-  </audio>
+setInterval(spawnPopup, 1500);
 
-  <audio id="glitchS" preload="auto">
-    <source src="https://assets.mixkit.co/sfx/preview/mixkit-arcade-retro-game-over-232.mp3" type="audio/mp3">
-  </audio>
+// ========== CHAT HACKER ================
+setTimeout(() => {
+    document.getElementById("hackerChat").style.display = "block";
+}, 9000);
 
-  <!-- SCRIPT eksternal -->
-  <script src="script.js"></script>
+// ========== BSOD =======================
+setTimeout(() => {
+    document.getElementById("bsod").style.display = "block";
+}, 15000);
+
+setTimeout(() => {
+    document.getElementById("bsod").style.display = "none";
+}, 26000);
+
+// ========== SYSTEM FREEZE (LOCKDOWN) ============
+setTimeout(() => {
+    document.getElementById("lockdown").style.display = "flex";
+    freezeScreen(true);
+
+    setTimeout(() => {
+        freezeScreen(false);
+    }, 10000);
+
+}, 28000);
+
+// Fake freeze
+function freezeScreen(state) {
+    if (state) {
+        document.body.style.pointerEvents = "none";
+    } else {
+        document.body.style.pointerEvents = "auto";
+        document.getElementById("lockdown").style.display = "none";
+    }
+}
+</script>
+
 </body>
 </html>
