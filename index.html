@@ -1,192 +1,60 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="id">
 <head>
-<meta charset="UTF-8">
-<title>Ransomware Simulation - Hardcore Mode</title>
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<style>
-    body {
-        background: black;
-        color: #ff0000;
-        font-family: 'Courier New', monospace;
-        overflow: hidden;
-        margin: 0;
-        padding: 0;
-    }
-
-    #terminal {
-        white-space: pre-line;
-        padding: 20px;
-        font-size: 16px;
-        color: #0aff0a;
-        height: 100vh;
-        overflow-y: auto;
-    }
-
-    /* Static Noise */
-    #staticNoise {
-        position: fixed;
-        inset: 0;
-        background: url('https://media.giphy.com/media/oEI9uBYSzLpBK/giphy.gif');
-        background-size: cover;
-        display: none;
-        z-index: 1500;
-        opacity: 0.2;
-    }
-
-    /* Popup */
-    .popup {
-        position: fixed;
-        width: 240px;
-        padding: 15px;
-        background: #111;
-        border: 2px solid red;
-        color: red;
-        z-index: 999;
-        font-size: 14px;
-        animation: shake 0.3s infinite;
-    }
-
-    @keyframes shake {
-        0% { transform: translate(0,0); }
-        25% { transform: translate(2px,-2px); }
-        50% { transform: translate(-2px,2px); }
-        100% { transform: translate(0,0); }
-    }
-
-    /* BSOD */
-    #bsod {
-        display: none;
-        position: fixed;
-        inset: 0;
-        background: #001aff;
-        color: white;
-        font-size: 20px;
-        padding: 40px;
-        z-index: 2000;
-        text-align: left;
-        font-family: Consolas;
-    }
-
-    /* Lockdown Overlay */
-    #lockdown {
-        display: none;
-        background: rgba(255, 0, 0, 0.85);
-        color: white;
-        font-size: 28px;
-        font-weight: bold;
-        position: fixed;
-        inset: 0;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        z-index: 5000;
-        text-shadow: 0 0 20px black;
-    }
-
-    /* Chat Hacker */
-    #hackerChat {
-        position: fixed;
-        bottom: 10px;
-        left: 10px;
-        width: 300px;
-        background: black;
-        border: 2px solid red;
-        color: red;
-        padding: 10px;
-        display: none;
-        animation: shake 0.2s infinite;
-        z-index: 3000;
-    }
-</style>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Simulasi Lockscreen (Edukasi)</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<div id="terminal">Initializing ransomware simulation...\n</div>
+  <main id="app">
+    <section id="content">
+      <h1>Demo Halaman Utama</h1>
+      <p>Ini halaman konten biasa — klik <strong>MULAI SIMULASI</strong> untuk melihat lockscreen edukasi.</p>
+      <button id="startBtn" class="btn primary">MULAI SIMULASI</button>
+      <p class="note">Catatan: Ini hanya simulasi visual. Untuk berhenti kapan saja, tekan tombol <em>Emergency Exit (Demo)</em> atau tutup tab.</p>
+    </section>
+  </main>
 
-<div id="staticNoise"></div>
-<div id="bsod">A problem has been detected and Windows has been shut down to prevent damage.\n\nFAKE_RANSOMWARE_ERROR_CODE: 0x000000DEADC0DE\n\nCollecting data for crash dump...\nRestarting in 10 seconds...</div>
-<div id="lockdown">🔒 SYSTEM LOCKDOWN ACTIVE<br>ENTER PIN TO UNLOCK</div>
+  <!-- LOCKSCREEN OVERLAY (SIMULASI) -->
+  <div id="lockOverlay" aria-hidden="true" role="dialog" aria-label="Lockscreen Simulasi">
+    <div class="lockInner" role="document" tabindex="0">
+      <h2 class="lockTitle">⚠️ SISTEM TERKUNCI</h2>
+      <p class="lockDesc">Beberapa file pada perangkat ini dikunci. Untuk demonstrasi, masukkan PIN untuk membuka kunci.</p>
 
-<div id="hackerChat">👤 Hacker: "Bayar sebelum waktu habis… Kamu cuma punya 5 menit."</div>
+      <div class="lockMeters">
+        <div class="meter">
+          <div class="meterLabel">Encryption (visual)</div>
+          <div class="meterBar" id="encBar"><i style="width:0%"></i></div>
+        </div>
+        <div class="meter">
+          <div class="meterLabel">Countdown</div>
+          <div id="countdown">00:20</div>
+        </div>
+      </div>
 
-<script>
-// ========== AUTO TYPING TERMINAL ================
-const terminal = document.getElementById("terminal");
-let hackerLines = [
-    "[SCAN] Encrypting system files...",
-    "[LOCK] Locking user directories...",
-    "[WARN] Firewall bypassed.",
-    "[INFO] Uploading device fingerprint...",
-    "[CRITICAL] CPU Overload!",
-    "[ALERT] Data destruction in progress...",
-];
+      <div class="pinRow">
+        <input id="pinInput" type="password" inputmode="numeric" maxlength="10" placeholder="Masukkan PIN" aria-label="Masukkan PIN" />
+        <button id="unlockBtn" class="btn">UNLOCK</button>
+      </div>
 
-function typeLine() {
-    let line = hackerLines[Math.floor(Math.random() * hackerLines.length)];
-    terminal.innerHTML += line + "\n";
-    terminal.scrollTop = terminal.scrollHeight;
-}
-setInterval(typeLine, 600);
+      <div id="lockMsg" role="status" aria-live="polite"></div>
 
-// ========== STATIC NOISE ================
-setTimeout(() => { 
-    document.getElementById("staticNoise").style.display = "block"; 
-}, 3000);
+      <div class="lockActions">
+        <button id="contactBtn" class="btn ghost">Hubungi Admin (Demo)</button>
+        <!-- Emergency Exit: visible, always available for safety -->
+        <button id="emergencyExit" class="btn danger">Emergency Exit (Demo)</button>
+      </div>
 
-setTimeout(() => { 
-    document.getElementById("staticNoise").style.display = "none"; 
-}, 7000);
+      <div id="miniHint" class="small">PIN default untuk demo: <strong>159753</strong></div>
+    </div>
+  </div>
 
-// ========== POPUP SPAM ==================
-function spawnPopup() {
-    let p = document.createElement("div");
-    p.className = "popup";
-    p.innerText = "⚠ FILE ENCRYPTED!\nPAY TO RESTORE!";
-    p.style.top = Math.random() * 80 + "%";
-    p.style.left = Math.random() * 80 + "%";
-    document.body.appendChild(p);
+  <!-- audio -->
+  <audio id="sfxGlitch" preload="auto"><source src="https://assets.mixkit.co/sfx/preview/mixkit-arcade-retro-game-over-232.mp3" type="audio/mp3"></audio>
+  <audio id="sfxSuccess" preload="auto"><source src="https://assets.mixkit.co/sfx/preview/mixkit-quick-win-video-game-notification-269.wav" type="audio/mp3"></audio>
 
-    setTimeout(() => p.remove(), 5000);
-}
-
-setInterval(spawnPopup, 1500);
-
-// ========== CHAT HACKER ================
-setTimeout(() => {
-    document.getElementById("hackerChat").style.display = "block";
-}, 9000);
-
-// ========== BSOD =======================
-setTimeout(() => {
-    document.getElementById("bsod").style.display = "block";
-}, 15000);
-
-setTimeout(() => {
-    document.getElementById("bsod").style.display = "none";
-}, 26000);
-
-// ========== SYSTEM FREEZE (LOCKDOWN) ============
-setTimeout(() => {
-    document.getElementById("lockdown").style.display = "flex";
-    freezeScreen(true);
-
-    setTimeout(() => {
-        freezeScreen(false);
-    }, 10000);
-
-}, 28000);
-
-// Fake freeze
-function freezeScreen(state) {
-    if (state) {
-        document.body.style.pointerEvents = "none";
-    } else {
-        document.body.style.pointerEvents = "auto";
-        document.getElementById("lockdown").style.display = "none";
-    }
-}
-</script>
-
+  <script src="script.js"></script>
 </body>
 </html>
